@@ -1,0 +1,18 @@
+.navbarWrapper {
+    position:fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.logo {
+    height:35px;
+    width:auto;
+    margin-right: 10px;
+    display: flex;
+}
+
+#button:hover {
+    text-decoration: underline;
+}
+
