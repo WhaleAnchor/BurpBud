@@ -74,10 +74,10 @@ const BurpLogs = ({ uid }) => {
         await addBurpLog(uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment);
     
         // Clear the input fields after submitting
-        setNewBurpTime(getCurrentTimeInMilitaryFormat());
+        setNewBurpDate('');
+        setNewBurpTime('');
         setNewBurpCount('');
         setNewBurpDuration(timeSinceLastLog());
-        setNewBurpDate(getCurrentDateInMMDDYYYYFormat());
         setNewBurpComment('');
     };
 
@@ -86,10 +86,28 @@ const BurpLogs = ({ uid }) => {
 
     return (
         <div className="inventoryWrapper">
-            <h1>Log Dem Burps</h1>
+            <h1>Manual Log</h1>
             <Grid className="inputGrid" color="secondary">
                 <div className="inputFields">
                     Current Time | {getCurrentDateInMMDDYYYYFormat()} | {getCurrentTimeInMilitaryFormat()}
+                    <Box component="Date" sx={boxStyles} noValidate autoComplete="off">
+                        <TextField
+                            id="outlined-basic"
+                            label="Date"
+                            variant="outlined"
+                            value={getCurrentDateInMMDDYYYYFormat()}
+                            onChange={(e) => setNewBurpDate(e.target.value)}
+                        />
+                    </Box>
+                    <Box component="Time" sx={boxStyles} noValidate autoComplete="off">
+                        <TextField
+                            id="outlined-basic"
+                            label="Time"
+                            variant="outlined"
+                            value={getCurrentTimeInMilitaryFormat()}
+                            onChange={(e) => setNewBurpTime(e.target.value)}
+                        />
+                    </Box>
                     <Box component="Count" sx={boxStyles} noValidate autoComplete="off">
                         <TextField
                             id="outlined-basic"
