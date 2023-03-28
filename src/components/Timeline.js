@@ -25,8 +25,8 @@ const Timeline = ({ uid }) => {
   };
 
   // Manually update a comment
-  const updateComment = async (id, comment) => {
-    const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs", id);
+  const updateComment1 = async (comment) => {
+    const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
 
     const newFields = {burpComment: comment};
     await updateDoc(burpLogsCollection, newFields);
@@ -39,6 +39,25 @@ const Timeline = ({ uid }) => {
     }));
     setRows(formattedData);
   };
+  async function updateComment(docId, newComment) {
+    try {
+      const burpLogDocRef = doc(db, "user_collections", uid, "burpLogs", docId);
+      await updateDoc(burpLogDocRef, { burpComment: newComment });
+      console.log("Comment updated successfully!");
+
+      // Update the state with the new comment value
+    const updatedRows = rows.map((row) => {
+      if (row.id === docId) {
+        return { ...row, burpComment: newComment };
+      } else {
+        return row;
+      }
+    });
+    setRows(updatedRows);
+    } catch (error) {
+      console.error("Error updating comment: ", error);
+    }
+  }
 
   const columns = [
     {
@@ -52,9 +71,9 @@ const Timeline = ({ uid }) => {
         ),
     },
     { field: 'burpDate', headerName: 'date', width: 100 },
-    { field: 'burpTime', headerName: 'time', width: 70 },
-    { field: 'burpCount', headerName: 'count', width: 50 },
-    { field: 'burpDuration', headerName: 'delta', width: 30 },
+    { field: 'burpTime', headerName: 'time', width: 100 },
+    { field: 'burpCount', headerName: 'count', width: 100 },
+    { field: 'burpDuration', headerName: 'delta', width: 100 },
     {
       field: 'burpComment',
       headerName: 'comment',
@@ -62,8 +81,8 @@ const Timeline = ({ uid }) => {
       renderCell: (params) => (
         <div onClick={() => {
           const newComment = prompt(`Enter new comment.`, params.value);
-          if (newComment !== null && newComment.trim() !== '' && /^\d+$/.test(newComment)) {
-            updateComment(params.id, parseInt(newComment));
+          if (newComment !== null) {
+            updateComment(params.id, newComment);
           }
         }}>
           {params.value}
@@ -112,17 +131,14 @@ const Timeline = ({ uid }) => {
     <div className="Row">
 
     <div  className="firestoreBoxes">
-      <div className="title">
-        <h1>
-          burps
-        </h1>
-      </div>
-      <div style={{ height:500, width:450}}>
+      <div >
         <DataGrid
           rows={rows}
           columns={columns}
           rowsPerPageOptions={[-1]}
           sortModel={sortModel}
+          autoHeight={true}
+          style={{ width: "70vw" }}
           onSortModelChange={(model) => setSortModel(model)}
         />
       </div>
@@ -134,7 +150,6 @@ const Timeline = ({ uid }) => {
     <div className="tableWrapper">
       {isSmallScreen ? <SmallScreen /> : < RegularScreen/>}
       <h3 className="userHint">
-        * You may click the quantity in each row to manually input the quantity. *
       </h3>
     </div>
   );
