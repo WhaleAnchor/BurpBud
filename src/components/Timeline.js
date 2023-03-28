@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { collection, query, getDocs, doc, updateDoc, orderBy, deleteDoc } from 'firebase/firestore';
-import { writeFile } from 'xlsx';
 import { saveAs } from 'file-saver';
 import ExcelJS from 'exceljs';
 
