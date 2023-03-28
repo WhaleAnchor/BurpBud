@@ -75,6 +75,9 @@ const BurpButton = ({ uid }) => {
                 variant="contained"
                 color="secondary"
                 className="big-round-button"
+                style={{borderRadius: "50%",
+                width: "100px",
+                height: "100px",}}
                 onClick={handleButtonClick}
             >
                 Burp
@@ -98,9 +101,7 @@ const BurpButton = ({ uid }) => {
                     >
                         Log Burp
                     </Button>
-                    
                 </div>
-                
             )}
         </div>
     );
