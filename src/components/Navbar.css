@@ -1,12 +1,16 @@
 .navbarWrapper {
     position:fixed;
     width: 100%;
+    height:50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     top: 0;
     left: 0;
 }
 
 .logo {
-    height:35px;
+    height:30px;
     width:auto;
     margin-right: 10px;
     display: flex;

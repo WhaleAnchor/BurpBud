@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,13 +10,11 @@ import './NavBar.css'
 // firebase imports
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
-import { auth, db, logout } from "../firebase/firebase";
-import { query, collection, getDocs, where } from "firebase/firestore";
+import { auth, logout } from "../firebase/firebase";
 
 
-function NavBar() {
+function NavBar({ setActiveComponent }) {
   const [user, loading, error] = useAuthState(auth);
-  const [name, setName] = useState("");
   const navigate = useNavigate();
   
   // If not logged in, takes user back to login page
@@ -25,9 +23,12 @@ function NavBar() {
     if (!user) return navigate("/");
   }, [user, loading]);  
 
-  // Takes user to ULINE website
-  function ulineHandler() {
-    window.open("https://www.uline.com", "_blank");
+  function burpLogHandler() {
+    setActiveComponent('logs');
+  }
+
+  function timelineHandler() {
+    setActiveComponent('timeline');
   };
 
 
@@ -53,20 +54,20 @@ function NavBar() {
             BoxChoi
           </Typography>
 
-          {/* Inventory */}
+          {/* Main burp logging page */}
           <Box sx={{ flexGrow: 0 }}>
             <Typography title="Open settings">
-              <Button href="./" sx={{ my: 2, color: 'white', display: 'block'  }}>
-                Inventory
+              <Button onClick={burpLogHandler} sx={{ my: 2, color: 'white', display: 'block'  }}>
+                Burp-Log
               </Button>
             </Typography>
           </Box>
 
-          {/* U-Line */}
+          {/* data page */}
           <Box sx={{ flexGrow: 0 }}>
             <Typography title="Open settings">
-              <Button onClick={ulineHandler} sx={{ my: 2, color: 'white', display: 'block'  }}>
-              U-Line
+              <Button onClick={timelineHandler} sx={{ my: 2, color: 'white', display: 'block'  }}>
+              Timeline
               </Button>
             </Typography>
           </Box>
