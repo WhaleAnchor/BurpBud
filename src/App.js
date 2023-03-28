@@ -20,7 +20,6 @@ function App() {
       <NavBar setActiveComponent={setActiveComponent} />
       <Routes>
         <>
-          <Route exact path="/" element={<Login />} />
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/reset" element={<Reset />} />
           <Route exact path="/" element={user ? <LoggingPage activeComponent={activeComponent} /> : <Login />}/>

@@ -128,7 +128,7 @@ const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBu
         console.error(err);
         alert(err.message);
     };
-    window.location.replace('/logs');
+    window.location.replace('/');
 };
 
 const getLastBurpLog = async (uid) => {
