@@ -3,6 +3,7 @@ import { db } from '../firebase/firebase';
 import { collection, query, getDocs, doc, updateDoc, orderBy, deleteDoc } from 'firebase/firestore';
 import { writeFile } from 'xlsx';
 import { saveAs } from 'file-saver';
+import ExcelJS from 'exceljs';
 
 // material ui imports
 import { DataGrid } from '@mui/x-data-grid';
@@ -143,30 +144,33 @@ const Timeline = ({ uid }) => {
   );
 
   // Function to export firestore snapshots to excel
-  const handleExport = () => {
-    const data = rows.map(row => {
-      return [
-        row.burpDate,
-        row.burpTime,
-        row.burpCount,
-        row.burpDuration,
-        row.burpComment
-      ];
+  const handleExport = async () => {
+    // Create a new workbook instance
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('BoxBud Data');
+  
+    // Add data to the worksheet
+    sheet.columns = [
+      { header: 'Date', key: 'date', width: 12 },
+      { header: 'Time', key: 'time', width: 10 },
+      { header: 'Count', key: 'count', width: 10 },
+      { header: 'Delta', key: 'delta', width: 10 },
+      { header: 'Comment', key: 'comment', width: 40 },
+    ];
+    
+    rows.forEach((row) => {
+      sheet.addRow({
+        date: row.burpDate,
+        time: row.burpTime,
+        count: row.burpCount,
+        delta: row.burpDuration,
+        comment: row.burpComment,
+      });
     });
   
-    const worksheet = {
-      headers: ['Date', 'Time', 'Count', 'Delta', 'Comment'],
-      data: data
-    };
-  
-    const workbook = {
-      Sheets: { 'data': worksheet },
-      SheetNames: ['data']
-    };
-  
-    const excelBuffer = writeFile(workbook, { type: 'buffer' });
+    // Write the workbook to a buffer
+    const excelBuffer = await workbook.xlsx.writeBuffer();
     const excelBlob = new Blob([excelBuffer], {type:"application/vnd.ms-excel"});
-  
     const filename = `burp_logs_${new Date().toLocaleDateString()}.xlsx`;
     saveAs(excelBlob, filename);
   };
