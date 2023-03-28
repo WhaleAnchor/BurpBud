@@ -1,17 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { db } from '../firebase/firebase';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { saveAs } from 'file-saver';
 import {Workbook} from 'exceljs';
 
+import './ReactTablesStyles.css';
 // material ui imports
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 
+import { useTable, useSortBy, usePagination } from 'react-table';
+
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
+  // firestore data that will go into datagrid
+  const columns = [
+    { accessor: "burpDate", Header: "date", width: 100 },
+    { accessor: "burpTime", Header: "time", width: 100 },
+    { accessor: "burpCount", Header: "count", width: 100 },
+    { accessor: "burpDuration", Header: "delta", width: 100 },
+    {
+      accessor: "burpComment",
+      Header: "comment",
+      width: 300,
+      Cell: ({ row }) => (
+        <div
+          onClick={() => {
+            const newComment = prompt("Enter new comment.", row.values.burpComment);
+            if (newComment !== null) {
+              updateComment(row.id, newComment);
+            }
+          }}
+        >
+          {row.values.burpComment}
+        </div>
+      ),
+    },
+  ];
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows: tableRows,
+    prepareRow,
+    state: { pageIndex, pageSize },
+    page,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    canPreviousPage,
+    canNextPage,
+  } = useTable(
+    {
+      columns: useMemo(() => columns, []),
+      data: useMemo(() => rows, [rows]),
+      initialState: {
+        sortBy: [
+          { id: "burpDate", desc: true },
+          { id: "burpTime", desc: true },
+        ],
+        pageIndex: 0,
+        pageSize: 15,
+      },
+    },
+    useSortBy,
+    usePagination
+  );
+
   const [sortModel, setSortModel] = useState([
     {
       field: 'burpTime',
@@ -22,6 +82,8 @@ const Timeline = ({ uid }) => {
       sort: 'desc',
     },
   ]);
+  
+  
 
   // Deleting a burp log entry
   const deleteBurp = async (id) => {
@@ -51,38 +113,7 @@ const Timeline = ({ uid }) => {
     }
   }
 
-  // firestore data that will go into datagrid
-  const columns = [
-    {
-        field: 'delete',
-        headerName: '',
-        width: 10,
-        renderCell: (params) => (
-        <IconButton onClick={() => deleteBurp(params.id)}>
-            <DeleteIcon />
-        </IconButton>
-        ),
-    },
-    { field: 'burpDate', headerName: 'date', width: 100 },
-    { field: 'burpTime', headerName: 'time', width: 100 },
-    { field: 'burpCount', headerName: 'count', width: 100 },
-    { field: 'burpDuration', headerName: 'delta', width: 100 },
-    {
-      field: 'burpComment',
-      headerName: 'comment',
-      width: 530,
-      renderCell: (params) => (
-        <div onClick={() => {
-          const newComment = prompt(`Enter new comment.`, params.value);
-          if (newComment !== null) {
-            updateComment(params.id, newComment);
-          }
-        }}>
-          {params.value}
-        </div>
-      )
-  },
-];
+  
   
   // fetches data from firestore
   useEffect(() => {
@@ -104,44 +135,92 @@ const Timeline = ({ uid }) => {
   // Regular screen
   const RegularScreen = () => (
     <div className="Row">
-
-    <div  className="firestoreBoxes">
-      <div >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          rowsPerPageOptions={[-1]}
-          sortModel={sortModel}
-          autoHeight={true}
-          style={{ width: "70vw" }}
-          onSortModelChange={(model) => setSortModel(model)}
-        />
+      <div className="firestoreBoxes">
+        <div>
+          <table {...getTableProps()} className="ReactTable">
+            <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render("Header")}
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
+                      </span>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {/* Add pagination controls here */}
+          <div>
+            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+              {"<<"}
+            </button>{" "}
+            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+              {"<"}
+              </button>{" "}
+          <button onClick={() => nextPage()} disabled={!canNextPage}>
+            {">"}
+          </button>{" "}
+          <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+            {">>"}
+          </button>{" "}
+          <span>
+            Page{" "}
+            <strong>
+              {pageIndex + 1} of {pageCount}
+            </strong>{" "}
+          </span>
+          <span>
+            | Go to page:{" "}
+            <input
+              type="number"
+              defaultValue={pageIndex + 1}
+              onChange={(e) => {
+                const pageNumber = e.target.value ? Number(e.target.value) - 1 : 0;
+                gotoPage(pageNumber);
+              }}
+              style={{ width: "50px" }}
+            />
+          </span>{" "}
+          <select
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+          >
+            {[15, 30, 45, 60, 75].map((size) => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   </div>
-  );
+);
 
-  // Small screen
-  const SmallScreen = () => (
-    <div className="">
-      <div className="">
-          <div style={{ height: 500, width: 450 }}>
-            <div>
-              <h1>
-                Boxes
-              </h1>  
-            </div>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              rowsPerPageOptions={[-1]}
-              sortModel={sortModel}
-              onSortModelChange={(model) => setSortModel(model)}
-            />
-          </div>
-      </div>
-    </div>
-  );
+           
+  
 
   // Function to export firestore snapshots to excel
   const handleExport = async () => {
@@ -205,11 +284,15 @@ const Timeline = ({ uid }) => {
   
   return (
     <div className="tableWrapper">
-      <Button variant='contained' color="success" style={{ marginBottom: "10px" }} onClick={handleExport}> 
-        Export to Excel 
+      <Button
+        variant="contained"
+        color="success"
+        style={{ marginBottom: "10px" }}
+        onClick={handleExport}
+      >
+        Export to Excel
       </Button>
-      {isSmallScreen ? <SmallScreen /> : < RegularScreen/>}
-      
+      <RegularScreen />
     </div>
   );
 };

@@ -1,0 +1,37 @@
+.ReactTable {
+    display: inline-block;
+    border-spacing: 0;
+    border: 1px solid #ccc;
+    min-width: 60vw;
+    max-width:60vw;
+  }
+  
+  .ReactTable thead {
+    font-weight: bold;
+  }
+  
+  .ReactTable thead tr {
+    border-bottom: 1px solid #ffffff;
+  }
+  
+  .ReactTable thead th {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .ReactTable tbody tr {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .ReactTable tbody td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .ReactTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .ReactTable tbody tr:nth-child(odd) {
+    background-color: #ccc;
+  }
+  
