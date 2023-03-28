@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import {db, auth, addBurpLog, getLastBurpLog} from "../firebase/firebase";
-import './BurpLogs.css'
+import './BurpButton.css';
 
 // material ui imports
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
 const getCurrentTimeInMilitaryFormat = () => {
@@ -25,14 +23,13 @@ const getCurrentDateInMMDDYYYYFormat = () => {
     return `${month}/${day}/${year}`;
 };
 
-
 const BurpButton = ({ uid }) => {
-    const [newBurpTime, setNewBurpTime] = useState(getCurrentTimeInMilitaryFormat());
-    const [newBurpCount, setNewBurpCount] = useState(1);
-    const [newBurpDate, setNewBurpDate] = useState(getCurrentDateInMMDDYYYYFormat());
-    const [newBurpComment, setNewBurpComment] = useState('');
+    const [counter, setCounter] = useState(0);
+    const [showLogBurp, setShowLogBurp] = useState(false);
     const [lastBurpTime, setLastBurpTime] = useState(null);
-    const [newBurpDuration, setNewBurpDuration] = useState(''); 
+    const [newBurpDuration, setNewBurpDuration] = useState('');
+    const [newBurpComment, setNewBurpComment] = useState('');
+
     // find the most recent log 
     useEffect(() => {
         if (uid) {
@@ -45,74 +42,66 @@ const BurpButton = ({ uid }) => {
 
     useEffect(() => {
         if (lastBurpTime) {
-          const now = new Date();
-          const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-          const [lastHours, lastMinutes] = lastBurpTime.split(':').map(Number);
-          const lastTimeInMinutes = lastHours * 60 + lastMinutes;
-          const duration = currentTimeInMinutes - lastTimeInMinutes;
-          setNewBurpDuration(duration);
+        const now = new Date();
+        const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+        const [lastHours, lastMinutes] = lastBurpTime.split(':').map(Number);
+        const lastTimeInMinutes = lastHours * 60 + lastMinutes;
+        const duration = currentTimeInMinutes - lastTimeInMinutes;
+        setNewBurpDuration(duration);
         }
     }, [lastBurpTime]);
-
-    const timeSinceLastLog = () => {
-        if (!lastBurpTime) {
-            return 'N/A';
-        }
-    
-        const now = new Date();
-        const lastLogTime = new Date(lastBurpTime);
-        const diffInMinutes = Math.floor((now - lastLogTime) / 60000);
-        const hours = Math.floor(diffInMinutes / 60);
-        const minutes = diffInMinutes % 60;
-    
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    const handleButtonClick = () => {
+        setCounter(counter + 1);
+        setShowLogBurp(true);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // Call the addBurpLog function to add the data to Firestore
-        await addBurpLog(uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment);
-    
-        // Clear the input fields after submitting
-        setNewBurpTime(getCurrentTimeInMilitaryFormat());
-        setNewBurpCount('');
-        setNewBurpDuration(timeSinceLastLog());
-        setNewBurpDate(getCurrentDateInMMDDYYYYFormat());
-        setNewBurpComment('');
-    };
+    const handleLogBurpClick = async () => {
 
-    // Styling
-    const boxStyles = { '& > :not(style)': { m: 1 } };
+        const newBurpTime = getCurrentTimeInMilitaryFormat();
+        const newBurpDate = getCurrentDateInMMDDYYYYFormat();
+    
+        // Call the addBurpLog function with the counter value as the newBurpCount
+        await addBurpLog(uid, newBurpTime, counter, newBurpDuration, newBurpDate, newBurpComment);
+    
+        // Reset the counter and hide the "Log Burp" button
+        setCounter(0);
+        setShowLogBurp(false);
+    };
 
     return (
-        <div className="inventoryWrapper">
-            <h1>Log Dem Burps</h1>
-            <Grid className="inputGrid" color="secondary">
-                <div className="inputFields">
-                    Current Time | {getCurrentDateInMMDDYYYYFormat()} | {getCurrentTimeInMilitaryFormat()}
-                    <Box component="Count" sx={boxStyles} noValidate autoComplete="off">
-                        <TextField
-                            id="outlined-basic"
-                            label="Count"
-                            variant="outlined"
-                            value={newBurpCount}
-                            onChange={(e) => setNewBurpCount(e.target.value)}
-                        />
-                    </Box>
-                    <Box component="Comment" sx={boxStyles} noValidate autoComplete="off">
+        <div className="burp-button-wrapper">
+            <h1> Press the Button </h1>
+            <Button
+                variant="contained"
+                color="secondary"
+                className="big-round-button"
+                onClick={handleButtonClick}
+            >
+                Burp
+            </Button>
+            {showLogBurp && (
+                <div className="log-burp-container">
+                    <Box component="Comment" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
                             label="Comment" 
                             variant="outlined" 
                             onChange={(e) => setNewBurpComment(e.target.value)} />
                     </Box>
-                    <Stack spacing={2} direction="row" className="logButton">
-                        <Button variant="contained" onClick={handleSubmit}>
-                            Log Burp
-                        </Button>
-                    </Stack>
+                    
+                    <p>Counter: {counter}</p>
+                    
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleLogBurpClick}
+                    >
+                        Log Burp
+                    </Button>
+                    
                 </div>
-            </Grid>
+                
+            )}
         </div>
     );
 };
