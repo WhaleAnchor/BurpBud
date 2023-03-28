@@ -2,7 +2,8 @@
   "name": "boxbud",
   "version": "0.1.0",
   "engines": {
-    "node": "16.17.0"
+    "node": "16.17.0",
+    "npm": "9.6.2"
   },
   "private": true,
   "dependencies": {
