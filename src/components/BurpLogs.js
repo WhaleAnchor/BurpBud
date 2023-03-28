@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
-import {db, auth, addBurpLog, getLastBurpLog} from "../firebase/firebase";
+import {addBurpLog, getLastBurpLog} from "../firebase/firebase";
 import './BurpLogs.css'
 
 // material ui imports
