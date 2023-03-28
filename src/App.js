@@ -7,7 +7,6 @@ import Register from './components/Register';
 import Reset from './components/Reset';
 import LoggingPage from './pages/LoggingPage';
 import NavBar from './components/NavBar';
-import Timeline from './components/Timeline';
 
 function App() {
   const [activeComponent, setActiveComponent] = useState('logs');
