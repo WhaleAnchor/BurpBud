@@ -58,7 +58,7 @@ const LoggingPage = ({ activeComponent }) => {
               )}
             </>
             )}
-            {activeComponent === 'timeline' && <Timeline />}
+            {activeComponent === 'timeline' && <Timeline uid={user.uid} />}
           </div>
         </>
       ) : (

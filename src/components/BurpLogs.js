@@ -32,6 +32,8 @@ const BurpLogs = ({ uid }) => {
     const [newBurpComment, setNewBurpComment] = useState('');
     const [lastBurpTime, setLastBurpTime] = useState(null);
     const [newBurpDuration, setNewBurpDuration] = useState(''); 
+
+    console.log(uid)
     // find the most recent log 
     useEffect(() => {
         if (uid) {
