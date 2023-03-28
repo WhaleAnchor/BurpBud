@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { collection, query, getDocs, doc, updateDoc, orderBy, deleteDoc } from 'firebase/firestore';
+import { writeFile } from 'xlsx';
+import { saveAs } from 'file-saver';
 
 // material ui imports
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
@@ -49,6 +50,7 @@ const Timeline = ({ uid }) => {
     }
   }
 
+  // firestore data that will go into datagrid
   const columns = [
     {
         field: 'delete',
@@ -81,6 +83,7 @@ const Timeline = ({ uid }) => {
   },
 ];
   
+  // fetches data from firestore
   useEffect(() => {
     const fetchBurpLogs = async () => {
       const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
@@ -93,10 +96,31 @@ const Timeline = ({ uid }) => {
     };
     fetchBurpLogs();
   }, [uid]);
+
   // JSX depeding on screen size
   const isSmallScreen = window.innerWidth <= 1260;
 
-  // JSX depending on screen size
+  // Regular screen
+  const RegularScreen = () => (
+    <div className="Row">
+
+    <div  className="firestoreBoxes">
+      <div >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          rowsPerPageOptions={[-1]}
+          sortModel={sortModel}
+          autoHeight={true}
+          style={{ width: "70vw" }}
+          onSortModelChange={(model) => setSortModel(model)}
+        />
+      </div>
+    </div>
+  </div>
+  );
+
+  // Small screen
   const SmallScreen = () => (
     <div className="">
       <div className="">
@@ -117,30 +141,40 @@ const Timeline = ({ uid }) => {
       </div>
     </div>
   );
-  const RegularScreen = () => (
-    <div className="Row">
 
-    <div  className="firestoreBoxes">
-      <div >
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          rowsPerPageOptions={[-1]}
-          sortModel={sortModel}
-          autoHeight={true}
-          style={{ width: "70vw" }}
-          onSortModelChange={(model) => setSortModel(model)}
-        />
-      </div>
-    </div>
-  </div>
-);
-
+  // Function to export firestore snapshots to excel
+  const handleExport = () => {
+    const data = rows.map(row => {
+      return [
+        row.burpDate,
+        row.burpTime,
+        row.burpCount,
+        row.burpDuration,
+        row.burpComment
+      ];
+    });
+  
+    const worksheet = {
+      headers: ['Date', 'Time', 'Count', 'Delta', 'Comment'],
+      data: data
+    };
+  
+    const workbook = {
+      Sheets: { 'data': worksheet },
+      SheetNames: ['data']
+    };
+  
+    const excelBuffer = writeFile(workbook, { type: 'buffer' });
+    const excelBlob = new Blob([excelBuffer], {type:"application/vnd.ms-excel"});
+  
+    const filename = `burp_logs_${new Date().toLocaleDateString()}.xlsx`;
+    saveAs(excelBlob, filename);
+  };
+  
   return (
     <div className="tableWrapper">
       {isSmallScreen ? <SmallScreen /> : < RegularScreen/>}
-      <h3 className="userHint">
-      </h3>
+      <button onClick={handleExport}>Export to Excel</button>
     </div>
   );
 };
