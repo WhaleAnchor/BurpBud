@@ -147,7 +147,7 @@ const getLastBurpLog = async (uid) => {
     return null;
 };
 
-// exports
+// function exports
 export {
   auth,
   db,
