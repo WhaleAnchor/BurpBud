@@ -25,20 +25,6 @@ const Timeline = ({ uid }) => {
   };
 
   // Manually update a comment
-  const updateComment1 = async (comment) => {
-    const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
-
-    const newFields = {burpComment: comment};
-    await updateDoc(burpLogsCollection, newFields);
-
-    const data = await getDocs(burpLogsCollection);
-
-    const formattedData = data.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setRows(formattedData);
-  };
   async function updateComment(docId, newComment) {
     try {
       const burpLogDocRef = doc(db, "user_collections", uid, "burpLogs", docId);
