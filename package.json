@@ -12,7 +12,6 @@
     "@firebase/app": "^0.9.5",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.14",
-    "@mui/x-data-grid": "^6.0.3",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "firebase": "^9.18.0",
@@ -22,6 +21,7 @@
     "react-firebase-hooks": "^5.1.1",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
+    "react-table": "^7.8.0",
     "xlsx": "^0.18.5"
   },
   "scripts": {
