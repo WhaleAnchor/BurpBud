@@ -65,10 +65,14 @@ const BurpButton = ({ uid }) => {
         const newBurpTime = getCurrentTimeInMilitaryFormat();
         const newBurpDate = getCurrentDateInMMDDYYYYFormat();
     
+        // Set the new comment value to "no comment" if it's an empty string
+        const commentValue = newBurpComment.trim() === '' ? 'No comment' : newBurpComment;
+
         // Call the addBurpLog function with the counter value as the newBurpCount
-        await addBurpLog(uid, newBurpTime, counter, newBurpDuration, newBurpDate, newBurpComment);
+        await addBurpLog(uid, newBurpTime, counter, newBurpDuration, newBurpDate, commentValue);
     
         // Reset the counter and hide the "Log Burp" button
+        // Clear the input fields after submitting
         setCounter(0);
         setShowLogBurp(false);
     };

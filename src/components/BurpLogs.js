@@ -27,13 +27,12 @@ const getCurrentDateInMMDDYYYYFormat = () => {
 
 const BurpLogs = ({ uid }) => {
     const [newBurpTime, setNewBurpTime] = useState(getCurrentTimeInMilitaryFormat());
-    const [newBurpCount, setNewBurpCount] = useState(1);
+    const [newBurpCount, setNewBurpCount] = useState('');
     const [newBurpDate, setNewBurpDate] = useState(getCurrentDateInMMDDYYYYFormat());
     const [newBurpComment, setNewBurpComment] = useState('');
     const [lastBurpTime, setLastBurpTime] = useState(null);
     const [newBurpDuration, setNewBurpDuration] = useState(''); 
 
-    console.log(uid)
     // find the most recent log 
     useEffect(() => {
         if (uid) {
@@ -71,15 +70,25 @@ const BurpLogs = ({ uid }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Set the new comment value to "no comment" if it's an empty string
+        const commentValue = newBurpComment.trim() === '' ? 'No comment' : newBurpComment;
+        
+        // Set the new burp count value to "1" if it's an empty string
+        const burpValue = newBurpCount.trim() === '' ? '1' : newBurpCount;
+        
+        // Set the new burp time value to "1" if it's an empty string
+        const burpTime = newBurpTime.trim() === '' ? '1' : newBurpTime;
+
         // Call the addBurpLog function to add the data to Firestore
-        await addBurpLog(uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment);
+        await addBurpLog(uid, burpTime, burpValue, newBurpDuration, newBurpDate, commentValue);
     
         // Clear the input fields after submitting
         setNewBurpDate('');
         setNewBurpTime('');
         setNewBurpCount('');
-        setNewBurpDuration(timeSinceLastLog());
         setNewBurpComment('');
+        setNewBurpDuration(timeSinceLastLog());
     };
 
     // Styling
@@ -104,19 +113,20 @@ const BurpLogs = ({ uid }) => {
                     <Box component="Time" sx={boxStyles} noValidate autoComplete="off">
                         <TextField
                             id="outlined-basic"
-                            label="Time"
+                            label={getCurrentTimeInMilitaryFormat()}
                             variant="outlined"
                             inputProps={{ inputMode: 'numeric' }}
-                            value={getCurrentTimeInMilitaryFormat()}
+                            placeholder={getCurrentTimeInMilitaryFormat()}
                             onChange={(e) => setNewBurpTime(e.target.value)}
                         />
                     </Box>
                     <Box component="Count" sx={boxStyles} noValidate autoComplete="off">
                         <TextField
                             id="outlined-basic"
-                            label="Count"
+                            label="Count. 1 if blank."
                             variant="outlined"
                             inputProps={{ inputMode: 'numeric' }}
+                            placeholder="1"
                             value={newBurpCount}
                             onChange={(e) => setNewBurpCount(e.target.value)}
                         />
@@ -126,6 +136,7 @@ const BurpLogs = ({ uid }) => {
                             id="outlined-basic" 
                             label="Comment" 
                             variant="outlined" 
+                            value={newBurpComment} 
                             onChange={(e) => setNewBurpComment(e.target.value)} />
                     </Box>
                     <Stack spacing={2} direction="row" className="logButton">
