@@ -2,21 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { saveAs } from 'file-saver';
-import { Workbook } from 'exceljs';
+import {Workbook} from 'exceljs';
 
-import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
+// material ui imports
+import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
 
-const Timeline2 = ({ uid }) => {
+const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
+  const [sortModel, setSortModel] = useState([
+    {
+      field: 'burpTime',
+      sort: 'desc',
+    },
+    {
+      field: 'burpDate',
+      sort: 'desc',
+    },
+  ]);
 
   // Deleting a burp log entry
   const deleteBurp = async (id) => {
     // Delete the box from Firestore
-    await deleteDoc(doc(db, "user_collections", uid, "burpLogs", id));
-    setRows(rows.filter((doc) => doc.id !== id));
+      await deleteDoc(doc(db, "user_collections", uid, "burpLogs", id));
+      setRows(rows.filter((doc)=> doc.id !== id))
   };
 
   // Manually update a comment
@@ -27,20 +38,53 @@ const Timeline2 = ({ uid }) => {
       console.log("Comment updated successfully!");
 
       // Update the state with the new comment value
-      const updatedRows = rows.map((row) => {
-        if (row.id === docId) {
-          return { ...row, burpComment: newComment };
-        } else {
-          return row;
-        }
-      });
-      setRows(updatedRows);
+    const updatedRows = rows.map((row) => {
+      if (row.id === docId) {
+        return { ...row, burpComment: newComment };
+      } else {
+        return row;
+      }
+    });
+    setRows(updatedRows);
     } catch (error) {
       console.error("Error updating comment: ", error);
     }
-  };
-      
-  // Fetches data from Firestore
+  }
+
+  // firestore data that will go into datagrid
+  const columns = [
+    {
+        field: 'delete',
+        headerName: '',
+        width: 10,
+        renderCell: (params) => (
+        <IconButton onClick={() => deleteBurp(params.id)}>
+            <DeleteIcon />
+        </IconButton>
+        ),
+    },
+    { field: 'burpDate', headerName: 'date', width: 100 },
+    { field: 'burpTime', headerName: 'time', width: 100 },
+    { field: 'burpCount', headerName: 'count', width: 100 },
+    { field: 'burpDuration', headerName: 'delta', width: 100 },
+    {
+      field: 'burpComment',
+      headerName: 'comment',
+      width: 530,
+      renderCell: (params) => (
+        <div onClick={() => {
+          const newComment = prompt(`Enter new comment.`, params.value);
+          if (newComment !== null) {
+            updateComment(params.id, newComment);
+          }
+        }}>
+          {params.value}
+        </div>
+      )
+  },
+];
+  
+  // fetches data from firestore
   useEffect(() => {
     const fetchBurpLogs = async () => {
       const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
@@ -49,12 +93,57 @@ const Timeline2 = ({ uid }) => {
         id: doc.id,
         ...doc.data(),
       }));
-    setRows(formattedData);
-  };
+      setRows(formattedData);
+    };
     fetchBurpLogs();
   }, [uid]);
-    
-  // Function to export Firestore snapshots to Excel
+
+  // JSX depeding on screen size
+  const isSmallScreen = window.innerWidth <= 1260;
+
+  // Regular screen
+  const RegularScreen = () => (
+    <div className="Row">
+
+    <div  className="firestoreBoxes">
+      <div >
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          rowsPerPageOptions={[-1]}
+          sortModel={sortModel}
+          autoHeight={true}
+          style={{ width: "70vw" }}
+          onSortModelChange={(model) => setSortModel(model)}
+        />
+      </div>
+    </div>
+  </div>
+  );
+
+  // Small screen
+  const SmallScreen = () => (
+    <div className="">
+      <div className="">
+          <div style={{ height: 500, width: 450 }}>
+            <div>
+              <h1>
+                Boxes
+              </h1>  
+            </div>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              rowsPerPageOptions={[-1]}
+              sortModel={sortModel}
+              onSortModelChange={(model) => setSortModel(model)}
+            />
+          </div>
+      </div>
+    </div>
+  );
+
+  // Function to export firestore snapshots to excel
   const handleExport = async () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('BurpLogs');
@@ -111,51 +200,17 @@ const Timeline2 = ({ uid }) => {
     const filename = `burp_logs_${new Date().toLocaleDateString()}.xlsx`;
     saveAs(excelBlob, filename);
   };
-      
+
+  
+  
   return (
     <div className="tableWrapper">
-      <Button variant="contained" color="success" style={{ marginBottom: '10px' }} onClick={handleExport}>
-        Export to Excel
+      <Button variant='contained' color="success" style={{ marginBottom: "10px" }} onClick={handleExport}> 
+        Export to Excel 
       </Button>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Count</th>
-            <th>Delta</th>
-            <th>Comment</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td>
-                <IconButton onClick={() => deleteBurp(row.id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </td>
-              <td>{row.burpDate}</td>
-                <td>{row.burpTime}</td>
-                <td>{row.burpCount}</td>
-                <td>{row.burpDuration}</td>
-                <td
-                  onClick={() => {
-                    const newComment = prompt('Enter new comment., row.burpComment');
-                    if (newComment !== null) {
-                      updateComment(row.id, newComment);
-                    }
-                  }}
-                >
-                  {row.burpComment}
-              </td>
-            </tr>
-          ))}
-        </tbody>  
-      </Table>
+      {isSmallScreen ? <SmallScreen /> : < RegularScreen/>}
+      
     </div>
   );
 };
-
-export default Timeline2;
+export default Timeline;
