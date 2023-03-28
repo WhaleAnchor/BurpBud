@@ -123,6 +123,7 @@ const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBu
             burpDate: newBurpDate,
             burpComment: newBurpComment,
         });
+        console.log("Successfully logged")
   
     } catch (err) {
         console.error(err);
