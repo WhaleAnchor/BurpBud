@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
 import { collection, query, getDocs, doc, updateDoc, orderBy, deleteDoc } from 'firebase/firestore';
 import { saveAs } from 'file-saver';
-import ExcelJS from 'exceljs';
+import ExcelJS, {Workbook} from 'exceljs';
 
 // material ui imports
 import { DataGrid } from '@mui/x-data-grid';
@@ -144,26 +144,52 @@ const Timeline = ({ uid }) => {
 
   // Function to export firestore snapshots to excel
   const handleExport = async () => {
-    // Create a new workbook instance
-    const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet('BoxBud Data');
-  
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('BurpLogs');
+    
     // Add data to the worksheet
-    sheet.columns = [
+    worksheet.columns = [
       { header: 'Date', key: 'date', width: 12 },
       { header: 'Time', key: 'time', width: 10 },
       { header: 'Count', key: 'count', width: 10 },
       { header: 'Delta', key: 'delta', width: 10 },
       { header: 'Comment', key: 'comment', width: 40 },
+      { header: 'Daily Avg Count', key: 'dailyAvgCount', width: 15 },
+      { header: 'Daily Avg Delta', key: 'dailyAvgDelta', width: 15 },
     ];
-    
-    rows.forEach((row) => {
-      sheet.addRow({
-        date: row.burpDate,
-        time: row.burpTime,
-        count: row.burpCount,
-        delta: row.burpDuration,
-        comment: row.burpComment,
+  
+    // Group the rows by date
+    function groupBy(arr, key) {
+      return arr.reduce((acc, obj) => {
+        const val = obj[key];
+        acc[val] = acc[val] || [];
+        acc[val].push(obj);
+        return acc;
+      }, {});
+    }
+    const groupedRows = groupBy(rows, 'burpDate');
+  
+    // Iterate over each date group
+    Object.entries(groupedRows).forEach(([date, group]) => {
+      // Calculate the daily averages for Count and Delta
+      const totalBurps = group.reduce((acc, row) => acc + parseInt(row.burpCount), 0);
+      const dailyAvgCount = totalBurps / group.length;
+  
+      const totalDuration = group.reduce((acc, row) => acc + Number(row.burpDuration), 0);
+      const dailyAvgDelta = totalDuration / group.length;
+
+  
+      // Iterate over each row in the date group
+      group.forEach((row) => {
+        worksheet.addRow({
+          date: row.burpDate,
+          time: row.burpTime,
+          count: row.burpCount,
+          delta: row.burpDuration,
+          comment: row.burpComment,
+          dailyAvgCount,
+          dailyAvgDelta,
+        });
       });
     });
   
@@ -173,6 +199,8 @@ const Timeline = ({ uid }) => {
     const filename = `burp_logs_${new Date().toLocaleDateString()}.xlsx`;
     saveAs(excelBlob, filename);
   };
+
+  
   
   return (
     <div className="tableWrapper">
