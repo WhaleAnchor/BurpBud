@@ -13,6 +13,7 @@
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.14",
     "@mui/x-data-grid": "^6.0.3",
+    "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "firebase": "^9.18.0",
     "moment": "^2.29.4",
