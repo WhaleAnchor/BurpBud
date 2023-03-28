@@ -2,11 +2,11 @@ import './App.css';
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Login from './components/Login'
+import NavBar from './components/NavBar';
+import Login from './components/Login';
 import Register from './components/Register';
 import Reset from './components/Reset';
 import LoggingPage from './pages/LoggingPage';
-import NavBar from './components/NavBar';
 
 function App() {
   const [activeComponent, setActiveComponent] = useState('logs');
