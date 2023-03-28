@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase/firebase';
-import { collection, query, getDocs, doc, updateDoc, orderBy, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { saveAs } from 'file-saver';
-import ExcelJS, {Workbook} from 'exceljs';
+import {Workbook} from 'exceljs';
 
 // material ui imports
 import { DataGrid } from '@mui/x-data-grid';
@@ -14,14 +14,12 @@ const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
   const [sortModel, setSortModel] = useState([
     {
-      field: 'burpDate',
-      sort: 'desc',
-      comparator: (a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time),
-    },
-    {
       field: 'burpTime',
       sort: 'desc',
-      disableSorting: true,
+    },
+    {
+      field: 'burpDate',
+      sort: 'desc',
     },
   ]);
 
@@ -72,7 +70,7 @@ const Timeline = ({ uid }) => {
     {
       field: 'burpComment',
       headerName: 'comment',
-      width: 250,
+      width: 530,
       renderCell: (params) => (
         <div onClick={() => {
           const newComment = prompt(`Enter new comment.`, params.value);
