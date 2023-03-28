@@ -6,7 +6,7 @@ import Login from './components/Login'
 import Register from './components/Register';
 import Reset from './components/Reset';
 import LoggingPage from './pages/LoggingPage';
-import NavBar from 'src\components\NavBar.js';
+import NavBar from './components/NavBar';
 import Timeline from './components/Timeline';
 
 function App() {
