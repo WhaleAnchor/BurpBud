@@ -103,7 +103,7 @@ const BurpLogs = ({ uid }) => {
             <Grid className="inputGrid" color="secondary">
                 <div className="inputFields">
                     Current Time | {getCurrentDateInMMDDYYYYFormat()} | {getCurrentTimeInMilitaryFormat()}
-                    <Box component="Date" sx={boxStyles} noValidate autoComplete="off">
+                    <Box sx={boxStyles} noValidate autoComplete="off">
                         <TextField
                             id="outlined-basic"
                             label={getCurrentDateInMMDDYYYYFormat()}
@@ -113,7 +113,7 @@ const BurpLogs = ({ uid }) => {
                             onChange={(e) => setNewBurpDate(e.target.value)}
                         />
                     </Box>
-                    <Box component="Time" sx={boxStyles} noValidate autoComplete="off">
+                    <Box sx={boxStyles} noValidate autoComplete="off">
                         <TextField
                             id="outlined-basic"
                             label={getCurrentTimeInMilitaryFormat()}
@@ -123,7 +123,7 @@ const BurpLogs = ({ uid }) => {
                             onChange={(e) => setNewBurpTime(e.target.value)}
                         />
                     </Box>
-                    <Box component="Count" sx={boxStyles} noValidate autoComplete="off">
+                    <Box sx={boxStyles} noValidate autoComplete="off">
                         <TextField
                             id="outlined-basic"
                             label="Count. 1 if blank."
@@ -134,7 +134,7 @@ const BurpLogs = ({ uid }) => {
                             onChange={(e) => setNewBurpCount(e.target.value)}
                         />
                     </Box>
-                    <Box component="Comment" sx={boxStyles} noValidate autoComplete="off">
+                    <Box sx={boxStyles} noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
                             label="Comment" 
