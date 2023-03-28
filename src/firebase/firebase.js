@@ -16,6 +16,8 @@ import {
   collection,
   where,
   addDoc,
+  doc,
+  setDoc
 } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -38,23 +40,48 @@ const db = getFirestore(app);
 // Google authentication
 const googleProvider = new GoogleAuthProvider();
 const signInWithGoogle = async () => {
-  try {
-    const res = await signInWithPopup(auth, googleProvider);
-    const user = res.user;
-    const q = query(collection(db, "users"), where("uid", "==", user.uid));
-    const docs = await getDocs(q);
-    if (docs.docs.length === 0) {
-      await addDoc(collection(db, "users"), {
-        uid: user.uid,
-        name: user.displayName,
-        authProvider: "google",
-        email: user.email,
-      });
+    try {
+        const res = await signInWithPopup(auth, googleProvider);
+        const user = res.user;
+        const q = query(collection(db, "users"), where("uid", "==", user.uid));
+        const docs = await getDocs(q);
+        if (docs.docs.length === 0) {
+            await addDoc(collection(db, "users"), {
+            uid: user.uid,
+            name: user.displayName,
+            authProvider: "google",
+            email: user.email,
+            });
+
+            // Create a document for the user using their UID
+            await setDoc(doc(db, "user_collections", user.uid), {
+              uid: user.uid,
+            });
+          }
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      }
+
+const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment) => {
+    try {
+        // Access the user's unique "burpLogs" collection
+        const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
+  
+        // Add a new document with the given data to the "burpLogs" collection
+        await addDoc(burpLogsCollection, {
+            burpTime: newBurpTime,
+            burpCount: newBurpCount,
+            burpDuration: newBurpDuration,
+            burpDate: newBurpDate,
+            burpComment: newBurpComment,
+        });
+  
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
     }
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
 };
 
 // Email and Password authentication for signing in
@@ -109,4 +136,5 @@ export {
   registerWithEmailAndPassword,
   sendPasswordReset,
   logout,
+  addBurpLog,
 };
