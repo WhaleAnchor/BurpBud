@@ -75,10 +75,10 @@ const BurpLogs = ({ uid }) => {
         const commentValue = newBurpComment.trim() === '' ? 'No comment' : newBurpComment;
         
         // Set the new burp count value to "1" if it's an empty string
-        const burpValue = newBurpCount.trim() === '' ? '1' : newBurpCount;
+        const burpValue = newBurpCount.trim() === '' ? 1 : parseInt(newBurpCount);
         
         // Set the new burp time value to "1" if it's an empty string
-        const burpTime = newBurpTime.trim() === '' ? '1' : newBurpTime;
+        const burpTime = newBurpTime.trim() === '' ? 1 : parseInt(newBurpTime);
 
         // Call the addBurpLog function to add the data to Firestore
         await addBurpLog(uid, burpTime, burpValue, newBurpDuration, newBurpDate, commentValue);
