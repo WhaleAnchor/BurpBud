@@ -95,6 +95,7 @@ const BurpLogs = ({ uid }) => {
                             id="outlined-basic"
                             label="Date"
                             variant="outlined"
+                            inputProps={{ inputMode: 'numeric' }}
                             value={getCurrentDateInMMDDYYYYFormat()}
                             onChange={(e) => setNewBurpDate(e.target.value)}
                         />
@@ -104,6 +105,7 @@ const BurpLogs = ({ uid }) => {
                             id="outlined-basic"
                             label="Time"
                             variant="outlined"
+                            inputProps={{ inputMode: 'numeric' }}
                             value={getCurrentTimeInMilitaryFormat()}
                             onChange={(e) => setNewBurpTime(e.target.value)}
                         />
@@ -113,6 +115,7 @@ const BurpLogs = ({ uid }) => {
                             id="outlined-basic"
                             label="Count"
                             variant="outlined"
+                            inputProps={{ inputMode: 'numeric' }}
                             value={newBurpCount}
                             onChange={(e) => setNewBurpCount(e.target.value)}
                         />
