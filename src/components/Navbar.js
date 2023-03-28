@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { auth, logout } from "../firebase/firebase";
 
 
-function NavBar({ setActiveComponent }) {
+export function NavBar({ setActiveComponent }) {
   const [user, loading, error] = useAuthState(auth);
   const navigate = useNavigate();
   
