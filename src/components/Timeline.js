@@ -12,6 +12,10 @@ const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
   const [sortModel, setSortModel] = useState([
     {
+      field: "burpDate",
+      sort: "desc"
+    },
+    {
       field: "burpTime",
       sort: "desc"
     },
