@@ -17,7 +17,9 @@ import {
   where,
   addDoc,
   doc,
-  setDoc
+  setDoc,
+  limit,
+  orderBy,
 } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -61,27 +63,7 @@ const signInWithGoogle = async () => {
         } catch (err) {
           console.error(err);
           alert(err.message);
-        }
-      }
-
-const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment) => {
-    try {
-        // Access the user's unique "burpLogs" collection
-        const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
-  
-        // Add a new document with the given data to the "burpLogs" collection
-        await addDoc(burpLogsCollection, {
-            burpTime: newBurpTime,
-            burpCount: newBurpCount,
-            burpDuration: newBurpDuration,
-            burpDate: newBurpDate,
-            burpComment: newBurpComment,
-        });
-  
-    } catch (err) {
-        console.error(err);
-        alert(err.message);
-    }
+    };
 };
 
 // Email and Password authentication for signing in
@@ -127,6 +109,44 @@ const logout = () => {
     signOut(auth);
 };
 
+// functions for logging burps
+const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment) => {
+    try {
+        // Access the user's unique "burpLogs" collection
+        const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
+  
+        // Add a new document with the given data to the "burpLogs" collection
+        await addDoc(burpLogsCollection, {
+            burpTime: newBurpTime,
+            burpCount: newBurpCount,
+            burpDuration: newBurpDuration,
+            burpDate: newBurpDate,
+            burpComment: newBurpComment,
+        });
+  
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    };
+    window.location.replace('/logs');
+};
+
+const getLastBurpLog = async (uid) => {
+    try {
+        const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
+        const q = query(burpLogsCollection, orderBy("burpTime", "desc"), limit(1));
+        const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+            const lastLog = querySnapshot.docs[0].data();
+            return lastLog.burpTime;
+      }
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+};
+
 // exports
 export {
   auth,
@@ -137,4 +157,5 @@ export {
   sendPasswordReset,
   logout,
   addBurpLog,
+  getLastBurpLog,
 };
