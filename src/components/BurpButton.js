@@ -55,6 +55,11 @@ const BurpButton = ({ uid }) => {
         setShowLogBurp(true);
     };
 
+    const handleMinusClick = () => {
+        setCounter(counter - 1);
+        setShowLogBurp(true);
+    };
+
     const handleLogBurpClick = async () => {
 
         const newBurpTime = getCurrentTimeInMilitaryFormat();
@@ -71,19 +76,25 @@ const BurpButton = ({ uid }) => {
     return (
         <div className="burp-button-wrapper">
             <h1> Press the Button </h1>
-            <Button
-                variant="contained"
-                color="secondary"
-                className="big-round-button"
-                style={{borderRadius: "50%",
-                width: "100px",
-                height: "100px",}}
-                onClick={handleButtonClick}
-            >
-                Burp
-            </Button>
+            <div className="twobigbuttons">
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    className="big-round-button"
+                    style={{borderRadius: "50%",
+                    width: "100px",
+                    height: "100px",
+                    marginRight: "10px"
+                    }}
+                    onClick={handleButtonClick}
+                >
+                    Burp
+                </Button>
+            </div>
+            
             {showLogBurp && (
                 <div className="log-burp-container">
+                    
                     <Box component="Comment" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
@@ -91,12 +102,25 @@ const BurpButton = ({ uid }) => {
                             variant="outlined" 
                             onChange={(e) => setNewBurpComment(e.target.value)} />
                     </Box>
-                    
-                    <p>Counter: {counter}</p>
-                    
+                    <div className="countersection">
+                        <p>Counter: {counter}</p>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            style={{
+                                margin: "10px"
+                                }}
+                            onClick={handleMinusClick}
+                            >
+                            minus
+                        </Button>
+                    </div>
                     <Button
                         variant="contained"
-                        color="secondary"
+                        color="primary"
+                        style={{
+                        margin: "10px"
+                        }}
                         onClick={handleLogBurpClick}
                     >
                         Log Burp

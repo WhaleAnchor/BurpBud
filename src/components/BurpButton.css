@@ -11,11 +11,14 @@
   border-radius: 50%;
   font-size: 24px;
 }
-
 .log-burp-container {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.countersection {
+  display: flex;
+  flex-direction: row;
 }
