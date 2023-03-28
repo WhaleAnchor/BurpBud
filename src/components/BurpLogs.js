@@ -26,9 +26,9 @@ const getCurrentDateInMMDDYYYYFormat = () => {
 
 
 const BurpLogs = ({ uid }) => {
-    const [newBurpTime, setNewBurpTime] = useState(getCurrentTimeInMilitaryFormat());
+    const [newBurpTime, setNewBurpTime] = useState('');
     const [newBurpCount, setNewBurpCount] = useState('');
-    const [newBurpDate, setNewBurpDate] = useState(getCurrentDateInMMDDYYYYFormat());
+    const [newBurpDate, setNewBurpDate] = useState('');
     const [newBurpComment, setNewBurpComment] = useState('');
     const [lastBurpTime, setLastBurpTime] = useState(null);
     const [newBurpDuration, setNewBurpDuration] = useState(''); 
@@ -80,8 +80,11 @@ const BurpLogs = ({ uid }) => {
         // Set the new burp time value to "current time" if it's an empty string
         const burpTime = newBurpTime.trim() === '' ? getCurrentTimeInMilitaryFormat() : newBurpTime;
 
+        // Set the new burp time value to "current time" if it's an empty string
+        const burpDate = newBurpDate.trim() === '' ? getCurrentDateInMMDDYYYYFormat() : newBurpDate;
+
         // Call the addBurpLog function to add the data to Firestore
-        await addBurpLog(uid, burpTime, burpValue, newBurpDuration, newBurpDate, commentValue);
+        await addBurpLog(uid, burpTime, burpValue, newBurpDuration, burpDate, commentValue);
     
         // Clear the input fields after submitting
         setNewBurpDate('');
