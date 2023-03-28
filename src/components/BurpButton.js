@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
-import {db, auth, addBurpLog, getLastBurpLog} from "../firebase/firebase";
+import {addBurpLog, getLastBurpLog} from "../firebase/firebase";
 import './BurpButton.css';
 
 // material ui imports
@@ -99,7 +98,7 @@ const BurpButton = ({ uid }) => {
             {showLogBurp && (
                 <div className="log-burp-container">
                     
-                    <Box component="Comment" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
+                    <Box component="comment" sx={{ '& > :not(style)': { m: 1 } }} noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
                             label="Comment" 
