@@ -8,17 +8,20 @@ import ExcelJS, {Workbook} from 'exceljs';
 import { DataGrid } from '@mui/x-data-grid';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
 
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
   const [sortModel, setSortModel] = useState([
     {
-      field: "burpDate",
-      sort: "desc"
+      field: 'burpDate',
+      sort: 'desc',
+      comparator: (a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time),
     },
     {
-      field: "burpTime",
-      sort: "desc"
+      field: 'burpTime',
+      sort: 'desc',
+      disableSorting: true,
     },
   ]);
 
@@ -204,8 +207,11 @@ const Timeline = ({ uid }) => {
   
   return (
     <div className="tableWrapper">
+      <Button variant='contained' color="success" style={{ marginBottom: "10px" }} onClick={handleExport}> 
+        Export to Excel 
+      </Button>
       {isSmallScreen ? <SmallScreen /> : < RegularScreen/>}
-      <button onClick={handleExport}>Export to Excel</button>
+      
     </div>
   );
 };
