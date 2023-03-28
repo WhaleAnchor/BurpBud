@@ -10,7 +10,6 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@firebase/app": "^0.9.5",
-    "@firebase/firestore-compat": "^0.3.5",
     "@mui/material": "^5.11.14",
     "firebase": "^9.18.0",
     "react": "^18.2.0",
