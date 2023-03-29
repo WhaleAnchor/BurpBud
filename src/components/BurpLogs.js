@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {addBurpLog, getLastBurpLog} from "../firebase/firebase";
+import React, { useState } from "react";
+import {addBurpLog} from "../firebase/firebase";
 import './BurpLogs.css'
 
 // material ui imports
@@ -30,43 +30,7 @@ const BurpLogs = ({ uid }) => {
     const [newBurpCount, setNewBurpCount] = useState('');
     const [newBurpDate, setNewBurpDate] = useState('');
     const [newBurpComment, setNewBurpComment] = useState('');
-    const [lastBurpTime, setLastBurpTime] = useState(null);
-    const [newBurpDuration, setNewBurpDuration] = useState(''); 
 
-    // find the most recent log 
-    useEffect(() => {
-        if (uid) {
-            (async () => {
-                const lastLogTime = await getLastBurpLog(uid);
-                setLastBurpTime(lastLogTime);
-            })();
-        }
-    }, [uid]);
-
-    useEffect(() => {
-        if (lastBurpTime) {
-          const now = new Date();
-          const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-          const [lastHours, lastMinutes] = lastBurpTime.split(':').map(Number);
-          const lastTimeInMinutes = lastHours * 60 + lastMinutes;
-          const duration = currentTimeInMinutes - lastTimeInMinutes;
-          setNewBurpDuration(duration);
-        }
-    }, [lastBurpTime]);
-
-    const timeSinceLastLog = () => {
-        if (!lastBurpTime) {
-            return 'N/A';
-        }
-    
-        const now = new Date();
-        const lastLogTime = new Date(lastBurpTime);
-        const diffInMinutes = Math.floor((now - lastLogTime) / 60000);
-        const hours = Math.floor(diffInMinutes / 60);
-        const minutes = diffInMinutes % 60;
-    
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -84,14 +48,13 @@ const BurpLogs = ({ uid }) => {
         const burpDate = newBurpDate.trim() === '' ? getCurrentDateInMMDDYYYYFormat() : newBurpDate;
 
         // Call the addBurpLog function to add the data to Firestore
-        await addBurpLog(uid, burpTime, burpValue, newBurpDuration, burpDate, commentValue);
+        await addBurpLog(uid, burpTime, burpValue, burpDate, commentValue);
     
         // Clear the input fields after submitting
         setNewBurpDate('');
         setNewBurpTime('');
         setNewBurpCount('');
         setNewBurpComment('');
-        setNewBurpDuration(timeSinceLastLog());
     };
 
     // Styling

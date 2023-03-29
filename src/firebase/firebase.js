@@ -110,7 +110,7 @@ const logout = () => {
 };
 
 // functions for logging burps
-const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBurpDate, newBurpComment) => {
+const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDate, newBurpComment) => {
     try {
         // Access the user's unique "burpLogs" collection
         const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
@@ -119,7 +119,6 @@ const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBu
         await addDoc(burpLogsCollection, {
             burpTime: newBurpTime,
             burpCount: newBurpCount,
-            burpDuration: newBurpDuration,
             burpDate: newBurpDate,
             burpComment: newBurpComment,
         });
@@ -131,21 +130,6 @@ const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDuration, newBu
     };
 };
 
-const getLastBurpLog = async (uid) => {
-    try {
-        const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
-        const q = query(burpLogsCollection, orderBy("burpTime", "desc"), limit(1));
-        const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-            const lastLog = querySnapshot.docs[0].data();
-            return lastLog.burpTime;
-      }
-    } catch (err) {
-        console.error(err);
-    }
-    return null;
-};
 
 // function exports
 export {

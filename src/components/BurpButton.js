@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {addBurpLog, getLastBurpLog} from "../firebase/firebase";
 import './BurpButton.css';
 
 // material ui imports
@@ -25,34 +24,7 @@ const getCurrentDateInMMDDYYYYFormat = () => {
 const BurpButton = ({ uid }) => {
     const [counter, setCounter] = useState(0);
     const [showLogBurp, setShowLogBurp] = useState(false);
-    const [lastBurpTime, setLastBurpTime] = useState(null);
-    const [newBurpDuration, setNewBurpDuration] = useState('');
     const [newBurpComment, setNewBurpComment] = useState('');
-
-    // find the most recent log 
-    useEffect(() => {
-        if (uid) {
-            (async () => {
-                const lastLogTime = await getLastBurpLog(uid);
-                setLastBurpTime(lastLogTime);
-            })();
-        }
-    }, [uid]);
-
-    useEffect(() => {
-        if (lastBurpTime) {
-        const now = new Date();
-        const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-        const [lastHours, lastMinutes] = lastBurpTime.split(':').map(Number);
-        const lastTimeInMinutes = lastHours * 60 + lastMinutes;
-        const duration = currentTimeInMinutes - lastTimeInMinutes;
-        setNewBurpDuration(duration);
-        }
-    }, [lastBurpTime]);
-    const handleButtonClick = () => {
-        setCounter(counter + 1);
-        setShowLogBurp(true);
-    };
 
     const handleMinusClick = () => {
         setCounter(counter - 1);
@@ -68,7 +40,7 @@ const BurpButton = ({ uid }) => {
         const commentValue = newBurpComment.trim() === '' ? 'No comment' : newBurpComment;
 
         // Call the addBurpLog function with the counter value as the newBurpCount
-        await addBurpLog(uid, newBurpTime, counter, newBurpDuration, newBurpDate, commentValue);
+        await addBurpLog(uid, newBurpTime, counter, newBurpDate, commentValue);
     
         // Reset the counter and hide the "Log Burp" button
         // Clear the input fields after submitting
