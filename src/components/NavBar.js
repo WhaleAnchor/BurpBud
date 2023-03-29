@@ -31,6 +31,13 @@ export function NavBar({ setActiveComponent }) {
     setActiveComponent('timeline');
   };
 
+  function emailMe() {
+    const recipient = 'andrewsungwoochoi@gmail.com';
+    const subject = 'Feature Request';
+    const body = 'Hi BurpBud Team,\n\nI have a feature request for your app:\n\n';
+    window.open(`mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+  }
+  
 
   return (
     <AppBar className='navbarWrapper' color="primary">
@@ -73,10 +80,19 @@ export function NavBar({ setActiveComponent }) {
           </Box>
           
           {/* Log Out */}
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 1 }}>
             <Typography title="Open settings">
               <Button onClick={logout} sx={{ my: 2, color: 'white', display: 'block'  }}>
               Logout
+              </Button>
+            </Typography>
+          </Box>
+          
+          {/* Features */}
+          <Box sx={{ flexGrow: 0 }}>
+            <Typography title="Open settings">
+              <Button onClick={emailMe} sx={{ my: 2, color: 'white', display: 'block'  }}>
+              Request Features
               </Button>
             </Typography>
           </Box>
