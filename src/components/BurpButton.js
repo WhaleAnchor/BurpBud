@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {addBurpLog} from "../firebase/firebase";
 import './BurpButton.css';
 
 // material ui imports
@@ -24,7 +25,13 @@ const getCurrentDateInMMDDYYYYFormat = () => {
 const BurpButton = ({ uid }) => {
     const [counter, setCounter] = useState(0);
     const [showLogBurp, setShowLogBurp] = useState(false);
+    const [lastBurpTime, setLastBurpTime] = useState(null);
     const [newBurpComment, setNewBurpComment] = useState('');
+
+    const handleButtonClick = () => {
+        setCounter(counter + 1);
+        setShowLogBurp(true);
+    };
 
     const handleMinusClick = () => {
         setCounter(counter - 1);
