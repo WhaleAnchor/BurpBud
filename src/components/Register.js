@@ -14,7 +14,7 @@ function Register() {
     const [name, setName] = useState("");
     const [user, loading, error] = useAuthState(auth);
 
-    const history = useNavigate();
+    const navigate  = useNavigate();
 
     const register = () => {
         if (!name) alert("Please enter name");
@@ -23,8 +23,8 @@ function Register() {
 
     useEffect(() => {
         if (loading) return;
-        if (user) history.replace("/inventory");
-    }, [user, loading]);
+        if (user) navigate("/");
+      }, [user, loading]);
 
     return (
         <div className="register">
