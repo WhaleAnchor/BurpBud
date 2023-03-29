@@ -9,14 +9,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  
   align-items: center;
 }
 .ReactTable {
   display: inline-block;
   border-spacing: 0;
   border: 1px solid #ccc;
-  min-width: 80%;
-  max-width: 80%;
+  min-width: 80vw;
+  max-width: 80vw;
   overflow-x: auto;
   border:1px solid black;
   
