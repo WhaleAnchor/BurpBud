@@ -83,18 +83,13 @@ const Timeline = ({ uid }) => {
 
   // Deleting a burp log entry
   const deleteBurp = async (id) => {
-    // Delete the box from Firestore
-    
-    try {
-      await deleteDoc(doc(db, "user_collections", uid, "burpLogs", id));
-      setRows(rows.filter((doc)=> doc.id !== id))
-      console.log("success")
-    } catch (error) {
-
-      console.log(error)
-    }
-      
+    // Delete the burp log entry from Firestore
+    await deleteDoc(doc(db, "user_collections", uid, "burpLogs", id));
+  
+    // Update the state to remove the deleted burp log entry
+    setRows((prevRows) => prevRows.filter((row) => row.id !== id));
   };
+  
 
   // Manually update a comment
   async function updateComment(docId, newComment) {
