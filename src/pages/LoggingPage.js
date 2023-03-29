@@ -44,7 +44,12 @@ const LoggingPage = ({ activeComponent }) => {
     <div className="LoggingPageWrapper">
       {user ? (
         <>
-          <h1>Welcome, {user.displayName}</h1>
+          <h1>Welcome,{" "}
+            {user.displayName ? (
+              user.displayName
+            ) : (
+              <span>{user.email}</span>
+            )}</h1>
           {/* Pass the user's UID as a prop to the BurpLogs component */}
           <div className="LogContainer">
             {activeComponent === 'logs' && (
