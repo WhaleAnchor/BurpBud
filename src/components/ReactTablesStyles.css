@@ -1,36 +1,88 @@
+.tableWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.firestoreTable {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .ReactTable {
+  display: inline-block;
+  border-spacing: 0;
+  border: 1px solid #ccc;
+  min-width: 80%;
+  max-width: 80%;
+  overflow-x: auto;
+  border:1px solid black;
+}
+  
+.ReactTable thead {
+  font-weight: bold;
+}
+
+.ReactTable thead tr {
+  border-bottom: 1px solid #ffffff;
+}
+
+.ReactTable thead th {
+  padding: 8px;
+  text-align: left;
+}
+
+.ReactTable tbody tr {
+  border-bottom: 1px solid #ccc;
+}
+.ReactTable tbody {
+  display:flex;
+  flex-direction: column;
+  border:1px solid black;
+}
+
+.ReactTable tbody td {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top:1px;
+  padding-bottom:1px;
+  text-align: left;
+  
+}
+.ReactTable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+  border:1px solid rgb(122, 122, 122);
+}
+.ReactTable tbody tr:nth-child(odd) {
+  background-color: #ccc;
+  border:1px solid rgb(202, 200, 200);
+}
+.exportButton {
+  width:25%
+}
+
+@media only screen and (max-width: 600px) {
+  .ReactTable {
     display: inline-block;
     border-spacing: 0;
     border: 1px solid #ccc;
     min-width: 60vw;
-    max-width:60vw;
+    max-width:95vw;
   }
-  
-  .ReactTable thead {
-    font-weight: bold;
+
+  .ReactTable tbody td:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  
-  .ReactTable thead tr {
-    border-bottom: 1px solid #ffffff;
+
+  .exportButton {
+    width:45%
   }
-  
-  .ReactTable thead th {
-    padding: 8px;
-    text-align: left;
+
+  .rowSection {
+    opacity: 100;
   }
-  
-  .ReactTable tbody tr {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .ReactTable tbody td {
-    padding: 20px;
-    text-align: left;
-  }
-  .ReactTable tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  .ReactTable tbody tr:nth-child(odd) {
-    background-color: #ccc;
-  }
-  
+}
+
