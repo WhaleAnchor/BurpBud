@@ -20,17 +20,16 @@ const Timeline = ({ uid }) => {
   const columns = [
     {
       id: "delete",
-      Header: "",
+      Header: "Delete",
       Cell: ({ row }) => (
         <IconButton onClick={() => deleteBurp(row.original.id)}>
             <DeleteIcon />
         </IconButton>
       ),
-      width: 50,
     },
-    { accessor: "burpDate", Header: "date", width: 100 },
-    { accessor: "burpTime", Header: "time", width: 100 },
-    { accessor: "burpCount", Header: "count", width: 100 },
+    { accessor: "burpDate", Header: "date" },
+    { accessor: "burpTime", Header: "time" },
+    { accessor: "burpCount", Header: "count" },
     {
       accessor: "burpComment",
       Header: "comment",
@@ -75,7 +74,7 @@ const Timeline = ({ uid }) => {
           { id: "burpTime", desc: true },
         ],
         pageIndex: 0,
-        pageSize: 15,
+        pageSize: 12,
       },
     },
     useSortBy,
@@ -139,87 +138,83 @@ const Timeline = ({ uid }) => {
 
   // Regular screen
   const RegularScreen = () => (
-    <div className="Row">
-      <div className="firestoreBoxes">
-        <div>
-          <table {...getTableProps()} className="ReactTable">
-            <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render("Header")}
-                    <span>
-                      {column.isSorted
-                        ? column.isSortedDesc
-                          ? " 🔽"
-                          : " 🔼"
-                        : ""}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-              ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {page.map((row) => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map((cell) => {
-                      return (
-                        <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {/* Add pagination controls here */}
-          <div>
-            <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-              {"<<"}
-            </button>{" "}
-            <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-              {"<"}
-              </button>{" "}
-          <button onClick={() => nextPage()} disabled={!canNextPage}>
-            {">"}
-          </button>{" "}
-          <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-            {">>"}
-          </button>{" "}
-          <span>
-            Page{" "}
-            <strong>
-              {pageIndex + 1} of {pageCount}
-            </strong>{" "}
-          </span>
-          <span>
-            | Go to page:{" "}
-            <input
-              type="number"
-              defaultValue={pageIndex + 1}
-              onChange={(e) => {
-                const pageNumber = e.target.value ? Number(e.target.value) - 1 : 0;
-                gotoPage(pageNumber);
-              }}
-              style={{ width: "50px" }}
-            />
-          </span>{" "}
-          <select
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-          >
-            {[15, 30, 45, 60, 75].map((size) => (
-              <option key={size} value={size}>
-                Show {size}
-              </option>
+    <div className='firestoreTable'>
+      <table {...getTableProps()} className="ReactTable">
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map((column) => (
+              <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                {column.render("Header")}
+                <span>
+                  {column.isSorted
+                    ? column.isSortedDesc
+                      ? " 🔽"
+                      : " 🔼"
+                    : ""}
+                </span>
+              </th>
             ))}
-          </select>
-        </div>
-      </div>
+          </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()}>
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {/* Add pagination controls here */}
+      <div>
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {"<<"}
+        </button>{" "}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {"<"}
+          </button>{" "}
+      <button onClick={() => nextPage()} disabled={!canNextPage}>
+        {">"}
+      </button>{" "}
+      <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+        {">>"}
+      </button>{" "}
+      <span>
+        Page{" "}
+        <strong>
+          {pageIndex + 1} of {pageCount}
+        </strong>{" "}
+      </span>
+      <span>
+        | Go to page:{" "}
+        <input
+          type="number"
+          defaultValue={pageIndex + 1}
+          onChange={(e) => {
+            const pageNumber = e.target.value ? Number(e.target.value) - 1 : 0;
+            gotoPage(pageNumber);
+          }}
+          style={{ width: "50px" }}
+        />
+      </span>{" "}
+      <select
+        value={pageSize}
+        onChange={(e) => setPageSize(Number(e.target.value))}
+      >
+        {[12, 24, 36, 48, 60].map((size) => (
+          <option key={size} value={size}>
+            Show {size}
+          </option>
+        ))}
+      </select>
     </div>
   </div>
 );
@@ -317,7 +312,8 @@ const Timeline = ({ uid }) => {
       <Button
         variant="contained"
         color="success"
-        style={{ marginBottom: "10px" }}
+        style={{ marginBottom: "10px"}}
+        className="exportButton"
         onClick={handleExport}
       >
         Export to Excel
