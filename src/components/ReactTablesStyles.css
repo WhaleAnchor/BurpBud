@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  
 }
 .firestoreTable {
   display: flex;
@@ -18,6 +19,8 @@
   max-width: 80%;
   overflow-x: auto;
   border:1px solid black;
+  
+  background-color: white
 }
   
 .ReactTable thead {
@@ -55,7 +58,7 @@
   border:1px solid rgb(122, 122, 122);
 }
 .ReactTable tbody tr:nth-child(odd) {
-  background-color: #ccc;
+  background-color: #eaf1ee;
   border:1px solid rgb(202, 200, 200);
 }
 .exportButton {
