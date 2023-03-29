@@ -3,10 +3,13 @@ import { db } from '../firebase/firebase';
 import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { saveAs } from 'file-saver';
 import {Workbook} from 'exceljs';
+import moment from 'moment';
+
 
 import './ReactTablesStyles.css';
 // material ui imports
 import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 
 import { useTable, useSortBy, usePagination } from 'react-table';
@@ -15,10 +18,19 @@ const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
   // firestore data that will go into datagrid
   const columns = [
+    {
+      id: "delete",
+      Header: "",
+      Cell: ({ row }) => (
+        <IconButton onClick={() => deleteBurp(row.original.id)}>
+            <DeleteIcon />
+        </IconButton>
+      ),
+      width: 50,
+    },
     { accessor: "burpDate", Header: "date", width: 100 },
     { accessor: "burpTime", Header: "time", width: 100 },
     { accessor: "burpCount", Header: "count", width: 100 },
-    { accessor: "burpDuration", Header: "delta", width: 100 },
     {
       accessor: "burpComment",
       Header: "comment",
@@ -70,24 +82,19 @@ const Timeline = ({ uid }) => {
     usePagination
   );
 
-  const [sortModel, setSortModel] = useState([
-    {
-      field: 'burpTime',
-      sort: 'desc',
-    },
-    {
-      field: 'burpDate',
-      sort: 'desc',
-    },
-  ]);
-  
-  
-
   // Deleting a burp log entry
   const deleteBurp = async (id) => {
     // Delete the box from Firestore
+    
+    try {
       await deleteDoc(doc(db, "user_collections", uid, "burpLogs", id));
       setRows(rows.filter((doc)=> doc.id !== id))
+      console.log("success")
+    } catch (error) {
+
+      console.log(error)
+    }
+      
   };
 
   // Manually update a comment
@@ -139,19 +146,19 @@ const Timeline = ({ uid }) => {
             <thead>
               {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render("Header")}
-                      <span>
-                        {column.isSorted
-                          ? column.isSortedDesc
-                            ? " 🔽"
-                            : " 🔼"
-                          : ""}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render("Header")}
+                    <span>
+                      {column.isSorted
+                        ? column.isSortedDesc
+                          ? " 🔽"
+                          : " 🔼"
+                        : ""}
+                    </span>
+                  </th>
+                ))}
+              </tr>
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
@@ -217,23 +224,20 @@ const Timeline = ({ uid }) => {
   </div>
 );
 
-           
-  
-
   // Function to export firestore snapshots to excel
   const handleExport = async () => {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('BurpLogs');
-    
+  
     // Add data to the worksheet
     worksheet.columns = [
       { header: 'Date', key: 'date', width: 12 },
       { header: 'Time', key: 'time', width: 10 },
       { header: 'Count', key: 'count', width: 10 },
       { header: 'Delta', key: 'delta', width: 10 },
-      { header: 'Comment', key: 'comment', width: 40 },
       { header: 'Daily Avg Count', key: 'dailyAvgCount', width: 15 },
       { header: 'Daily Avg Delta', key: 'dailyAvgDelta', width: 15 },
+      { header: 'Comment', key: 'comment', width: 40 },
     ];
   
     // Group the rows by date
@@ -249,34 +253,62 @@ const Timeline = ({ uid }) => {
   
     // Iterate over each date group
     Object.entries(groupedRows).forEach(([date, group]) => {
+      // Sort the group by burpTime
+      group.sort((a, b) => a.burpTime.localeCompare(b.burpTime));
+  
       // Calculate the daily averages for Count and Delta
       const totalBurps = group.reduce((acc, row) => acc + parseInt(row.burpCount), 0);
       const dailyAvgCount = totalBurps / group.length;
-  
-      const totalDuration = group.reduce((acc, row) => acc + Number(row.burpDuration), 0);
-      const dailyAvgDelta = totalDuration / group.length;
-
-  
-      // Iterate over each row in the date group
-      group.forEach((row) => {
+      const dailyDeltas = [];
+      
+      group.forEach((row, index) => {
+        let delta = NaN;
+        if (index > 0) {
+          const previousRow = group[index - 1];
+          const currentTime = moment(`${row.burpDate}T${row.burpTime}`, 'MM-DD-YYYYTHH:mm');
+          const previousRowTime = moment(`${previousRow.burpDate}T${previousRow.burpTime}`, 'MM-DD-YYYYTHH:mm');
+          console.log('currentTime:', currentTime.format());
+          console.log('previousRowTime:', previousRowTime.format());
+      
+          if (row.burpDate === previousRow.burpDate) {
+            delta = currentTime.diff(previousRowTime, 'minutes');
+            console.log('Delta:', delta);
+            dailyDeltas.push(delta);
+          }
+        }
+      
+        // Add the row to the worksheet with the calculated delta
         worksheet.addRow({
           date: row.burpDate,
           time: row.burpTime,
           count: row.burpCount,
-          delta: row.burpDuration,
+          delta: delta.toFixed(2),
           comment: row.burpComment,
           dailyAvgCount,
-          dailyAvgDelta,
+          dailyAvgDelta: 0,
         });
       });
+      
+      // Calculate the daily average delta after the loop
+        const dailyAvgDelta = dailyDeltas.length > 0
+        ? dailyDeltas.reduce((acc, delta) => acc + delta, 0) / dailyDeltas.length
+        : NaN;
+
+        // Update the dailyAvgDelta value for all rows in the current date group
+        worksheet.eachRow((row, rowIndex) => {
+        if (rowIndex > 1 && row.getCell('date').value === date) {
+          row.getCell('dailyAvgDelta').value = isNaN(dailyAvgDelta) ? 'NaN' : dailyAvgDelta.toFixed(2);
+        }
+        });
+      
     });
   
     // Write the workbook to a buffer
-    const excelBuffer = await workbook.xlsx.writeBuffer();
-    const excelBlob = new Blob([excelBuffer], {type:"application/vnd.ms-excel"});
-    const filename = `burp_logs_${new Date().toLocaleDateString()}.xlsx`;
-    saveAs(excelBlob, filename);
-  };
+  const excelBuffer = await workbook.xlsx.writeBuffer();
+  const excelBlob = new Blob([excelBuffer], { type: "application/vnd.ms-excel" });
+  const filename = `burp_logs_${new Date().toLocaleDateString()}.xlsx`;
+  saveAs(excelBlob, filename);
+};
 
   
   
