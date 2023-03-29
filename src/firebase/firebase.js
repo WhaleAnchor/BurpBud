@@ -141,5 +141,4 @@ export {
   sendPasswordReset,
   logout,
   addBurpLog,
-  getLastBurpLog,
 };
