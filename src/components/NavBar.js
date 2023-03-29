@@ -51,7 +51,7 @@ export function NavBar({ setActiveComponent }) {
               textDecoration: 'none',
             }}
           >
-            Burp Bud
+            BurpBud
           </Typography>
 
           {/* Main burp logging page */}
