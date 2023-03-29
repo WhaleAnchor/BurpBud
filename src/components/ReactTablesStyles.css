@@ -15,7 +15,7 @@
   }
   
   .ReactTable thead th {
-    padding: 10px;
+    padding: 8px;
     text-align: left;
   }
   
@@ -24,10 +24,9 @@
   }
   
   .ReactTable tbody td {
-    padding: 10px;
+    padding: 20px;
     text-align: left;
   }
-  
   .ReactTable tbody tr:nth-child(even) {
     background-color: #f2f2f2;
   }
