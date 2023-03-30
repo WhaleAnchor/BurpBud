@@ -8,6 +8,8 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import { Snackbar } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 const getCurrentTimeInMilitaryFormat = () => {
     const now = new Date();
@@ -31,6 +33,23 @@ const BurpLogs = ({ uid }) => {
     const [newBurpDate, setNewBurpDate] = useState('');
     const [newBurpComment, setNewBurpComment] = useState('');
 
+    // state variables for notification upon success/fail logs
+    const [snackbarOpenSuccess, setSnackbarOpenSuccess] = useState(false);
+    const [snackbarOpenFailure, setSnackbarOpenFailure] = useState(false);
+
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+          return;
+        }
+        setSnackbarOpenSuccess(false);
+    };
+
+    const handleCloseSnackbarFailure = (event, reason) => {
+        if (reason === "clickaway") {
+          return;
+        }
+        setSnackbarOpenFailure(false);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,14 +66,24 @@ const BurpLogs = ({ uid }) => {
         // Set the new burp time value to "current time" if it's an empty string
         const burpDate = newBurpDate.trim() === '' ? getCurrentDateInMMDDYYYYFormat() : newBurpDate;
 
-        // Call the addBurpLog function to add the data to Firestore
-        await addBurpLog(uid, burpTime, burpValue, burpDate, commentValue);
-    
-        // Clear the input fields after submitting
-        setNewBurpDate('');
-        setNewBurpTime('');
-        setNewBurpCount('');
-        setNewBurpComment('');
+        try {
+            // Call the addBurpLog function to add the data to Firestore
+            await addBurpLog(uid, burpTime, burpValue, burpDate, commentValue);
+            
+            console.log("logged successfully");
+            setSnackbarOpenSuccess(true);
+
+            // Clear the input fields after submitting
+            setNewBurpDate('');
+            setNewBurpTime('');
+            setNewBurpCount('');
+            setNewBurpComment('');
+
+        } catch (error) {
+            console.log(error);
+            setSnackbarOpenFailure(true);
+        }
+        
     };
 
     // Styling
@@ -112,6 +141,28 @@ const BurpLogs = ({ uid }) => {
                     </Stack>
                 </div>
             </Grid>
+            {/* successful alert */}
+            <Snackbar
+                open={snackbarOpenSuccess}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+                Log added successfully!
+                </Alert>
+            </Snackbar>
+            {/* failure alert */}
+            <Snackbar
+                open={snackbarOpenFailure}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbarFailure}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            >
+                <Alert onClose={handleCloseSnackbarFailure} severity="error" sx={{ width: "100%" }}>
+                Failed. Please let me know in the "request features" asap!
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
