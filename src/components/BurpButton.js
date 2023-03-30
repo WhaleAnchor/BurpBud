@@ -6,6 +6,8 @@ import './BurpButton.css';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { Snackbar } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 const getCurrentTimeInMilitaryFormat = () => {
     const now = new Date();
@@ -25,8 +27,11 @@ const getCurrentDateInMMDDYYYYFormat = () => {
 const BurpButton = ({ uid }) => {
     const [counter, setCounter] = useState(0);
     const [showLogBurp, setShowLogBurp] = useState(false);
-    const [lastBurpTime, setLastBurpTime] = useState(null);
     const [newBurpComment, setNewBurpComment] = useState('');
+
+    // state variables for notification upon success/fail logs
+    const [snackbarOpenSuccess, setSnackbarOpenSuccess] = useState(false);
+    const [snackbarOpenFailure, setSnackbarOpenFailure] = useState(false);
 
     const handleButtonClick = () => {
         setCounter(counter + 1);
@@ -47,12 +52,32 @@ const BurpButton = ({ uid }) => {
         const commentValue = newBurpComment.trim() === '' ? 'No comment' : newBurpComment;
 
         // Call the addBurpLog function with the counter value as the newBurpCount
-        await addBurpLog(uid, newBurpTime, counter, newBurpDate, commentValue);
-    
+        try {
+            await addBurpLog(uid, newBurpTime, counter, newBurpDate, commentValue);
+            console.log("logged successfully");
+            setSnackbarOpenSuccess(true);
+        } catch (error) {
+            console.log(error);
+            setSnackbarOpenFailure(true);
+        }
         // Reset the counter and hide the "Log Burp" button
         // Clear the input fields after submitting
         setCounter(0);
         setShowLogBurp(false);
+    };
+
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+          return;
+        }
+        setSnackbarOpenSuccess(false);
+    };
+
+    const handleCloseSnackbarFailure = (event, reason) => {
+        if (reason === "clickaway") {
+          return;
+        }
+        setSnackbarOpenFailure(false);
     };
 
     return (
@@ -109,6 +134,28 @@ const BurpButton = ({ uid }) => {
                     </Button>
                 </div>
             )}
+            {/* successful alert */}
+            <Snackbar
+                open={snackbarOpenSuccess}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+                Log added successfully!
+                </Alert>
+            </Snackbar>
+            {/* failure alert */}
+            <Snackbar
+                open={snackbarOpenFailure}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbarFailure}
+                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            >
+                <Alert onClose={handleCloseSnackbarFailure} severity="error" sx={{ width: "100%" }}>
+                Failed. Please let me know in the "request features" asap!
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
