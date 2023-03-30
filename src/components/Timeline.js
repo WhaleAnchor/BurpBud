@@ -14,36 +14,42 @@ import Button from '@mui/material/Button';
 
 import { useTable, useSortBy, usePagination } from 'react-table';
 
+
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
+
   // firestore data that will go into datagrid
   const columns = [
     {
       id: "delete",
       Header: "Delete",
+      minWidth: 80,
+      maxWidth: 80,
       Cell: ({ row }) => (
         <IconButton onClick={() => deleteBurp(row.original.id)}>
             <DeleteIcon />
         </IconButton>
       ),
     },
-    { accessor: "burpDate", Header: "date" },
-    { accessor: "burpTime", Header: "time" },
-    { accessor: "burpCount", Header: "count" },
+    { accessor: "burpDate", Header: "Date", minWidth: 100, maxWidth: 100  },
+    { accessor: "burpTime", Header: "Time", minWidth: 100, maxWidth: 100  },
+    { accessor: "burpCount", Header: "Count", minWidth: 100, maxWidth: 100  },
+    { accessor: "dailyTotal", Header: "Daily Count", minWidth: 100, maxWidth: 100 },
     {
       accessor: "burpComment",
-      Header: "comment",
-      width: 300,
+      Header: "Comment",
+      minWidth: 200,
+      maxWidth: 200,
       Cell: ({ row }) => (
         <div
-          onClick={() => {
-            const newComment = prompt("Enter new comment.", row.values.burpComment);
-            if (newComment !== null) {
-              updateComment(row.id, newComment);
-            }
-          }}
-        >
-          {row.values.burpComment}
+        onClick={() => {
+          const newComment = prompt("Enter new comment.", row.values.burpComment);
+          if (newComment !== null) {
+            updateComment(row.original.id, newComment); // Change this line
+          }
+        }}
+      >
+        {row.values.burpComment}
         </div>
       ),
     },
@@ -112,24 +118,32 @@ const Timeline = ({ uid }) => {
     }
   }
 
-  
-  
   // fetches data from firestore
   useEffect(() => {
     const fetchBurpLogs = async () => {
       const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
       const data = await getDocs(burpLogsCollection);
-      const formattedData = data.docs.map((doc) => ({
+      const rawData = data.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+  
+      // Calculate daily totals
+      const dailyTotals = rawData.reduce((acc, row) => {
+        acc[row.burpDate] = (acc[row.burpDate] || 0) + Number(row.burpCount);
+        return acc;
+      }, {});
+  
+      // Add dailyTotal to each row
+      const formattedData = rawData.map((row) => ({
+        ...row,
+        dailyTotal: dailyTotals[row.burpDate],
+      }));
+  
       setRows(formattedData);
     };
     fetchBurpLogs();
   }, [uid]);
-
-  // JSX depeding on screen size
-  const isSmallScreen = window.innerWidth <= 1260;
 
   // Regular screen
   const RegularScreen = () => (
@@ -141,7 +155,7 @@ const Timeline = ({ uid }) => {
             {headerGroup.headers.map((column) => (
               <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                 {column.render("Header")}
-                <span>
+                <span >
                   {column.isSorted
                     ? column.isSortedDesc
                       ? " 🔽"
@@ -157,10 +171,10 @@ const Timeline = ({ uid }) => {
           {page.map((row) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps()} >
                 {row.cells.map((cell) => {
                   return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    <td {...cell.getCellProps()} style={{width:50}}>{cell.render("Cell")}</td>
                   );
                 })}
               </tr>
@@ -176,43 +190,43 @@ const Timeline = ({ uid }) => {
         <button onClick={() => previousPage()} disabled={!canPreviousPage}>
           {"<"}
           </button>{" "}
-      <button onClick={() => nextPage()} disabled={!canNextPage}>
-        {">"}
-      </button>{" "}
-      <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-        {">>"}
-      </button>{" "}
-      <span>
-        Page{" "}
-        <strong>
-          {pageIndex + 1} of {pageCount}
-        </strong>{" "}
-      </span>
-      <span>
-        | Go to page:{" "}
-        <input
-          type="number"
-          defaultValue={pageIndex + 1}
-          onChange={(e) => {
-            const pageNumber = e.target.value ? Number(e.target.value) - 1 : 0;
-            gotoPage(pageNumber);
-          }}
-          style={{ width: "50px" }}
-        />
-      </span>{" "}
-      <select
-        value={pageSize}
-        onChange={(e) => setPageSize(Number(e.target.value))}
-      >
-        {[12, 24, 36, 48, 60].map((size) => (
-          <option key={size} value={size}>
-            Show {size}
-          </option>
-        ))}
-      </select>
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {">"}
+        </button>{" "}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {">>"}
+        </button>{" "}
+        <span>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageCount}
+          </strong>{" "}
+        </span>
+        <span>
+          | Go to page:{" "}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={(e) => {
+              const pageNumber = e.target.value ? Number(e.target.value) - 1 : 0;
+              gotoPage(pageNumber);
+            }}
+            style={{ width: "50px" }}
+          />
+        </span>{" "}
+        <select
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+        >
+          {[12, 24, 36, 48, 60].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
-  </div>
-);
+  );
 
   // Function to export firestore snapshots to excel
   const handleExport = async () => {
@@ -225,6 +239,7 @@ const Timeline = ({ uid }) => {
       { header: 'Time', key: 'time', width: 10 },
       { header: 'Count', key: 'count', width: 10 },
       { header: 'Delta', key: 'delta', width: 10 },
+      { header: 'Daily Total', key: 'dailyTotal', width: 10 },
       { header: 'Daily Avg Count', key: 'dailyAvgCount', width: 15 },
       { header: 'Daily Avg Delta', key: 'dailyAvgDelta', width: 15 },
       { header: 'Comment', key: 'comment', width: 40 },
@@ -273,6 +288,7 @@ const Timeline = ({ uid }) => {
           time: row.burpTime,
           count: row.burpCount,
           delta: delta.toFixed(2),
+          dailyTotal: totalBurps,
           comment: row.burpComment,
           dailyAvgCount,
           dailyAvgDelta: 0,
