@@ -35,6 +35,7 @@
 .ReactTable thead th {
   padding: 8px;
   text-align: left;
+  border:1px solid black;
 }
 
 .ReactTable tbody tr {
@@ -43,7 +44,6 @@
 .ReactTable tbody {
   display:flex;
   flex-direction: column;
-  border:1px solid black;
 }
 
 .ReactTable tbody td {
@@ -52,6 +52,9 @@
   padding-top:1px;
   padding-bottom:1px;
   text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   
 }
 .ReactTable tbody tr:nth-child(even) {
@@ -74,15 +77,49 @@
     min-width: 60vw;
     max-width:95vw;
   }
-
-  .ReactTable tbody td:last-child {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .ReactTable thead th:nth-child(4) {
+    padding: 6px;
+    padding-left: 0px;
+    text-align: left;
+    border:1px solid black;
+    max-width: 40px;
   }
-
+  .ReactTable thead th:nth-child(6) {
+    padding: 6px;
+    padding-left: 0px;
+    text-align: left;
+    border:1px solid black;
+  }
+  .ReactTable tbody td {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top:1px;
+    padding-bottom:1px;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 50px;
+  }
+  .ReactTable tbody td:nth-child(1) {
+    max-width: 30px;
+    padding:0px;
+    padding-right:10px;
+  }
+  .ReactTable tbody td:nth-child(2) {
+    max-width: 65px;
+    padding:6px;
+  }
+  .ReactTable tbody td:nth-child(4) {
+    max-width: 40px;
+    padding:4px;
+  }
+  .ReactTable tbody td:nth-child(5) {
+    max-width: 33px;
+    padding:4px;
+  }
   .exportButton {
-    width:45%
+    width:45%;
   }
 
   .rowSection {
