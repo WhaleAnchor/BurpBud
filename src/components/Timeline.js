@@ -225,6 +225,7 @@ const Timeline = ({ uid }) => {
           ))}
         </select>
       </div>
+      <h4>Tip: To use multisorting, hold shift and click on the header.</h4>
     </div>
   );
 
