@@ -80,14 +80,12 @@
     padding: 6px;
     padding-left: 0px;
     text-align: left;
-    border:1px solid black;
     max-width: 40px;
   }
   .ReactTable thead th:nth-child(6) {
     padding: 6px;
     padding-left: 0px;
     text-align: left;
-    border:1px solid black;
   }
   .ReactTable tbody td {
     padding-left: 10px;
