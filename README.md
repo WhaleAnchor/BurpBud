@@ -42,11 +42,11 @@ This is a custom logging single-page-application using React that is designed to
 * The excel spreadsheet provides more information such as daily averages and deltas between each log.
 * The deployed link is on Render! Feel free to sign up and start logging away!
 
-![Burp Bud](assets/screenshot1.png "Image of Inventory Page") 
+![Burp Bud](assets/screenshot1.png "Image of Logging Page") 
 
-![Burp Bud](assets/screenshot4.png "Image of Firebase Database") 
+![Burp Bud](assets/screenshot4.png "Image of react tables with firebase/firestore data") 
 
-![Burp Bud](assets/screenshot2.png "Image of Login Page") 
+![Burp Bud](assets/screenshot2.png "Image of logging page in mobile view") 
 
 
 Here is a link to the repo: <a href="https://github.com/WhaleAnchor/BurpBud">Burp Bud</a>
