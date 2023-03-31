@@ -17,6 +17,7 @@ import { useTable, useSortBy, usePagination } from 'react-table';
 
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
+  const [renderKey, setRenderKey] = useState(0);
 
   // firestore data that will go into datagrid
   const columns = [
@@ -102,21 +103,31 @@ const Timeline = ({ uid }) => {
     try {
       const burpLogDocRef = doc(db, "user_collections", uid, "burpLogs", docId);
       await updateDoc(burpLogDocRef, { burpComment: newComment });
-      console.log("Comment updated successfully!");
+      
 
       // Update the state with the new comment value
-    const updatedRows = rows.map((row) => {
+      const updatedRows = rows.map((row) => {
       if (row.id === docId) {
+        
         return { ...row, burpComment: newComment };
+        
       } else {
         return row;
       }
-    });
-    setRows(updatedRows);
+      });
+      setRows((prevRows) => {
+        return prevRows.map((row) => {
+          if (row.id === docId) {
+            return { ...row, burpComment: newComment };
+          } else {
+            return row;
+          }
+        });
+      });
     } catch (error) {
       console.error("Error updating comment: ", error);
     }
-  }
+  };
 
   // fetches data from firestore
   useEffect(() => {
@@ -147,7 +158,7 @@ const Timeline = ({ uid }) => {
 
   // Regular screen
   const RegularScreen = () => (
-    <div className='firestoreTable'>
+    <div className='firestoreTable' key={renderKey}>
       <table {...getTableProps()} className="ReactTable">
         <thead>
           {headerGroups.map((headerGroup) => (
