@@ -1,70 +1,143 @@
-# Getting Started with Create React App
+<div id="top"></div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Contributors][contributors-shield]][contributors-url]
 
-## Available Scripts
+[![MIT License][license-shield]][license-url]
 
-In the project directory, you can run:
+<div>
+<h2 align="center">Burp Bud</h2>
+<p align="center">
+    A friend with gastropareisis said he needed a way to track his symptoms as per the request of his gastroentologist. 
+    He was manually logging each time his eructations, or burps, would come up- which came up to almost 100 logs per day.
+    Because this was so time consuming, he asked me if I could make something that would be easier for him.
+    <br />
+    <a href="https://github.com/WhaleAnchor/BurpBud"><strong> Go to the GitHub Repository »</strong></a>
+    <br />
+    <br />
+    <a href="https://burpbud.onrender.com/">Deployed on Render</a>
+    ·
+    <a href="https://github.com/WhaleAnchor/BurpBud/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/WhaleAnchor/BurpBud/issues">Request Feature</a>
+  </p>
+</div>
 
-### `npm start`
+## Table of Contents
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+<li><a href="#about-the-project">About the Project</a></li>
+<li><a href="#built-with">Built With</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#contact">Contact</a></li>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## About The Project
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This is a custom logging single-page-application using React that is designed to solve the common problem of time-consuming logs. 
+* The UI is designed differently for mobile for easier access and use!
+* The app utilizes Firebase to provide a cloud-based database, which can be accessed by all users of the app, providing real-time updates.
+* With user authentication options, including email/password or Google account, users can see their own data. 
+* The database can be downloaded to an excel spreadsheet for closer access to the data.
+* The excel spreadsheet provides more information such as daily averages and deltas between each log.
+* The deployed link is on Render! Feel free to sign up and start logging away!
 
-### `npm run build`
+![Burp Bud](assets/screenshot1.png "Image of Inventory Page") 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![Burp Bud](assets/screenshot4.png "Image of Firebase Database") 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![Burp Bud](assets/screenshot2.png "Image of Login Page") 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+Here is a link to the repo: <a href="https://github.com/WhaleAnchor/BurpBud">Burp Bud</a>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Built With
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+[![React][react-shield]][react-url]
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+[![NodeJS][nodejs-shield]][nodejs-url]
 
-## Learn More
+[![Firebase][firebase-shield]][firebase-url]
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+[![Materialui][materialui-shield]][materialui-url]
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+[![Reacttable][reacttable-shield]][reacttable-url]
 
-### Code Splitting
+[![Excel][excel-shield]][excel-url]
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-### Analyzing the Bundle Size
+## Installation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. Clone the repo.
+    ```sh
+    git clone git@github.com:WhaleAnchor/BurpBud.git
+    ```
+2. Download the dependencies.
+   ```sh
+    npm i
+   ```
+3. Run the locally.
+    ```sh
+    npm run start
+    ```
+4. Make an account.
+    ```sh
+    Register using email/password or with your Google account.
+    ```
 
-### Making a Progressive Web App
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Usage
 
-### Advanced Configuration
+If you want to try using the website:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Head over to the deployed website on Render!
+   ```sh
+   https://burpbud.onrender.com/
+   ```
 
-### Deployment
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## License
 
-### `npm run build` fails to minify
+Distributed under the MIT License.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Contact
+
+Andrew Choi - https://github.com/WhaleAnchor/BurpBud
+
+Project Link: [https://github.com/WhaleAnchor/BurpBud](https://github.com/WhaleAnchor/BurpBud)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- Markdown links -->
+[contributors-shield]:https://img.shields.io/github/contributors/WhaleAnchor/BurpBud.svg?style=for-the-badge
+[contributors-url]:https://github.com/WhaleAnchor/BurpBud/graphs/contributors
+
+[license-shield]:https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-url]:https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+
+[react-shield]:https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[react-url]:https://react.dev/reference/react
+
+[nodejs-shield]:https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white
+[nodejs-url]: https://nodejs.org/en/
+
+[firebase-shield]:https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black
+[firebase-url]:https://firebase.google.com/docs
+
+[materialui-shield]:https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white
+[materialui-url]:https://mui.com/material-ui/getting-started/overview/
+
+[reacttable-shield]:https://img.shields.io/badge/react%20table-FF4154?style=for-the-badge&logo=react%20table&logoColor=white
+[reacttable-url]:https://react-table-v7.tanstack.com/
+
+[excel-shield]:https://img.shields.io/badge/Microsoft_Excel-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white
+[excel-url]:https://www.npmjs.com/package/excel-api
+
+
