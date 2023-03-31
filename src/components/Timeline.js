@@ -11,6 +11,8 @@ import './ReactTablesStyles.css';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
+import { Snackbar } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 import { useTable, useSortBy, usePagination } from 'react-table';
 
@@ -18,6 +20,10 @@ import { useTable, useSortBy, usePagination } from 'react-table';
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
   const [renderKey, setRenderKey] = useState(0);
+
+  // state variables for notification upon success/fail logs
+  const [snackbarOpenSuccess, setSnackbarOpenSuccess] = useState(false);
+  const [snackbarOpenFailure, setSnackbarOpenFailure] = useState(false);
 
   // firestore data that will go into datagrid
   const columns = [
@@ -103,7 +109,8 @@ const Timeline = ({ uid }) => {
     try {
       const burpLogDocRef = doc(db, "user_collections", uid, "burpLogs", docId);
       await updateDoc(burpLogDocRef, { burpComment: newComment });
-      
+      console.log('update successful')
+      setSnackbarOpenSuccess(true);
 
       // Update the state with the new comment value
       const updatedRows = rows.map((row) => {
@@ -126,6 +133,7 @@ const Timeline = ({ uid }) => {
       });
     } catch (error) {
       console.error("Error updating comment: ", error);
+      setSnackbarOpenFailure(true);
     }
   };
 
@@ -155,7 +163,22 @@ const Timeline = ({ uid }) => {
     };
     fetchBurpLogs();
   }, [uid]);
+  
+  // Material UI Snackbar 
+  const handleCloseSnackbar = (event, reason) => {
+      if (reason === "clickaway") {
+        return;
+      }
+      setSnackbarOpenSuccess(false);
+  };
 
+  const handleCloseSnackbarFailure = (event, reason) => {
+      if (reason === "clickaway") {
+        return;
+      }
+      setSnackbarOpenFailure(false);
+  };
+  
   // Regular screen
   const RegularScreen = () => (
     <div className='firestoreTable' key={renderKey}>
@@ -342,6 +365,28 @@ const Timeline = ({ uid }) => {
         Export to Excel
       </Button>
       <RegularScreen />
+      {/* successful alert */}
+        <Snackbar
+            open={snackbarOpenSuccess}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+            <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+            Comment updated successfully!
+            </Alert>
+        </Snackbar>
+        {/* failure alert */}
+        <Snackbar
+            open={snackbarOpenFailure}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbarFailure}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        >
+            <Alert onClose={handleCloseSnackbarFailure} severity="error" sx={{ width: "100%" }}>
+            Failed. Please let me know in the "request features" asap!
+            </Alert>
+        </Snackbar>
     </div>
   );
 };
