@@ -9,7 +9,8 @@
 <p align="center">
     A friend with gastropareisis said he needed a way to track his symptoms as per the request of his gastroentologist. 
     He was manually logging each time his eructations, or burps, would come up- which came up to almost 100 logs per day.
-    Because this was so time consuming, he asked me if I could make something that would be easier for him.
+    Because this was so time consuming, he asked me if I could make him "a button." 
+    So that is exactly what I did and added extra features!
     <br />
     <a href="https://github.com/WhaleAnchor/BurpBud"><strong> Go to the GitHub Repository »</strong></a>
     <br />
