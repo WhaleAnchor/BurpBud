@@ -160,7 +160,9 @@ const Timeline = ({ uid }) => {
       }));
   
       setRows(formattedData);
+      console.log(formattedData)
     };
+    
     fetchBurpLogs();
   }, [uid]);
   
