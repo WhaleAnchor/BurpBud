@@ -110,6 +110,7 @@ const BurpLogs = ({ uid }) => {
                             id="outlined-basic"
                             label={getCurrentTimeInMilitaryFormat()}
                             variant="outlined"
+                            inputProps={{ inputMode: 'numeric', type: 'time' }}
                             placeholder={getCurrentTimeInMilitaryFormat()}
                             onChange={(e) => setNewBurpTime(e.target.value)}
                         />
