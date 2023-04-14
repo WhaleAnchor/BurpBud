@@ -44,6 +44,7 @@ const BurpLogs = ({ uid }) => {
         setSnackbarOpenSuccess(false);
     };
 
+    
     const handleCloseSnackbarFailure = (event, reason) => {
         if (reason === "clickaway") {
           return;
