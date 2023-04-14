@@ -112,20 +112,17 @@ const logout = () => {
 // functions for logging burps
 const addBurpLog = async (uid, newBurpTime, newBurpCount, newBurpDate, newBurpComment) => {
     try {
-      // Access the user's unique "burpLogs" collection
-      const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
-    
-      // Access the subcollection for the given date
-      const dateSubCollection = collection(burpLogsCollection, newBurpDate);
-
-      // Add a new document with the given data to the date subcollection
-      await addDoc(dateSubCollection, {
-        burpTime: newBurpTime,
-        burpCount: newBurpCount,
-        burpDate: newBurpDate,
-        burpComment: newBurpComment,
-      });
-      console.log("Successfully logged");
+        // Access the user's unique "burpLogs" collection
+        const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
+  
+        // Add a new document with the given data to the "burpLogs" collection
+        await addDoc(burpLogsCollection, {
+            burpTime: newBurpTime,
+            burpCount: newBurpCount,
+            burpDate: newBurpDate,
+            burpComment: newBurpComment,
+        });
+        console.log("Successfully logged")
   
     } catch (err) {
         console.error(err);
