@@ -6,7 +6,7 @@ import {Workbook} from 'exceljs';
 import moment from 'moment';
 
 
-import './ReactTablesStyles.css';
+import './Timeline.css';
 // material ui imports
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
@@ -20,6 +20,7 @@ import { useTable, useSortBy, usePagination } from 'react-table';
 const Timeline = ({ uid }) => {
   const [rows, setRows] = useState([]);
   const [renderKey, setRenderKey] = useState(0);
+  const [groupedRows, setGroupedRows] = useState({});
 
   // state variables for notification upon success/fail logs
   const [snackbarOpenSuccess, setSnackbarOpenSuccess] = useState(false);
@@ -147,14 +148,17 @@ const Timeline = ({ uid }) => {
         ...doc.data(),
       }));
   
+      // Filter rawData to only show today's data
+      const todaysData = rawData.filter(row => moment(row.burpDate, 'MM-DD-YYYY').isSame(moment(), 'day'));
+  
       // Calculate daily totals
-      const dailyTotals = rawData.reduce((acc, row) => {
+      const dailyTotals = todaysData.reduce((acc, row) => {
         acc[row.burpDate] = (acc[row.burpDate] || 0) + Number(row.burpCount);
         return acc;
       }, {});
   
       // Add dailyTotal to each row
-      const formattedData = rawData.map((row) => ({
+      const formattedData = todaysData.map((row) => ({
         ...row,
         dailyTotal: dailyTotals[row.burpDate],
       }));
@@ -162,7 +166,7 @@ const Timeline = ({ uid }) => {
       setRows(formattedData);
       console.log(formattedData)
     };
-    
+  
     fetchBurpLogs();
   }, [uid]);
   
@@ -184,6 +188,7 @@ const Timeline = ({ uid }) => {
   // Regular screen
   const RegularScreen = () => (
     <div className='firestoreTable' key={renderKey}>
+      <h4>Today's Logs</h4>
       <table {...getTableProps()} className="ReactTable">
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -261,7 +266,7 @@ const Timeline = ({ uid }) => {
           ))}
         </select>
       </div>
-      <h4>Tip: To use multisorting, hold shift and click on the header.</h4>
+      <h4>Tip: To use multisorting, hold shift and click on the header. <br></br> To see all your logs, click export to excel</h4>
     </div>
   );
 
@@ -282,6 +287,14 @@ const Timeline = ({ uid }) => {
       { header: 'Comment', key: 'comment', width: 40 },
     ];
   
+    // Retrieve all burp logs from Firestore
+    const burpLogsCollection = collection(db, "user_collections", uid, "burpLogs");
+    const data = await getDocs(burpLogsCollection);
+    const rawData = data.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  
     // Group the rows by date
     function groupBy(arr, key) {
       return arr.reduce((acc, obj) => {
@@ -291,7 +304,7 @@ const Timeline = ({ uid }) => {
         return acc;
       }, {});
     }
-    const groupedRows = groupBy(rows, 'burpDate');
+    const groupedRows = groupBy(rawData, 'burpDate');
   
     // Iterate over each date group
     Object.entries(groupedRows).forEach(([date, group]) => {
