@@ -1,10 +1,129 @@
-.firestoreBoxes {
+.tableWrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.tableWrapper {
+.firestoreTable {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    padding:0px;
 }
+
+.ReactTable {
+    display: inline-block;
+    border-spacing: 0;
+    border: 1px solid #ccc;
+    min-width: 80vw;
+    max-width: 80vw;
+    overflow-x: auto;
+    border:1px solid black;
+    background-color: white
+}
+    
+.ReactTable thead {
+    font-weight: bold;
+}
+
+.ReactTable thead tr {
+    border-bottom: 1px solid #ffffff;
+}
+
+.ReactTable thead th {
+    padding: 8px;
+    text-align: left;
+}
+
+.ReactTable tbody tr {
+    border-bottom: 1px solid #ccc;
+}
+.ReactTable tbody {
+    display:flex;
+    flex-direction: column;
+}
+
+.ReactTable tbody td {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top:1px;
+    padding-bottom:1px;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.ReactTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+    border:1px solid rgb(122, 122, 122);
+}
+
+.ReactTable tbody tr:nth-child(odd) {
+    background-color: #eaf1ee;
+    border:1px solid rgb(202, 200, 200);
+}
+
+.exportButton {
+    width:25%;
+}
+
+@media only screen and (max-width: 600px) {
+    .ReactTable {
+        display: inline-block;
+        border-spacing: 0;
+        border: 1px solid #ccc;
+        min-width: 60vw;
+        max-width:95vw;
+    }
+    .ReactTable thead th:nth-child(4) {
+        padding: 6px;
+        padding-left: 0px;
+        text-align: left;
+        max-width: 40px;
+    }
+    .ReactTable thead th:nth-child(6) {
+        padding: 6px;
+        padding-left: 0px;
+        text-align: left;
+    }
+    .ReactTable tbody td {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top:1px;
+        padding-bottom:1px;
+        text-align: left;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 50px;
+    }
+    .ReactTable tbody td:nth-child(1) {
+        max-width: 30px;
+        padding:0px;
+        padding-right:10px;
+    }
+    .ReactTable tbody td:nth-child(2) {
+        max-width: 65px;
+        padding:6px;
+    }
+    .ReactTable tbody td:nth-child(4) {
+        max-width: 40px;
+        padding:4px;
+    }
+    .ReactTable tbody td:nth-child(5) {
+        max-width: 33px;
+        padding:4px;
+    }
+    .exportButton {
+        width:45%;
+    }
+
+    .rowSection {
+        opacity: 100;
+    }
+}
+  
+  
